@@ -3,21 +3,32 @@ package com.example.team3
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import com.example.team3.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
 
+
+open class MainActivity : AppCompatActivity() {
+    lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding.navigationView.itemIconTintList = null
+        setContentView(binding.root)
+
 
         init()
     }
 
     private fun init() {
-
-        val amIntent = Intent(this, AddMemo::class.java)
-        startActivity(amIntent)
+        val intent = Intent(this, SettingActivity::class.java)
+        binding.apply {
+            imageMenu.setOnClickListener {
+                drawerLayout.openDrawer(GravityCompat.START)
+            }
+            settingBtn.setOnClickListener {
+                startActivity(intent)
+            }
+        }
     }
-
-
 }
