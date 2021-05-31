@@ -32,27 +32,5 @@ open class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
-
-        //--------------------------------------임시 코드--------------------------------------------//
-       // val intent2 = Intent(this, AddMemo::class.java).putExtra("path", "/storage/emulated/0/Android/data/com.example.team3/files/20210529_1221845715705003048.txt")
-        val intent2 = Intent(this, AddMemo::class.java).putExtra("path", "/storage/emulated/0/Android/data/com.example.team3/files/Pictures/20210529_7369896620702851193.jpg")
-        //val intent2 = Intent(this, AddMemo::class.java).putExtra("path", "/storage/emulated/0/Android/data/com.example.team3/files/Pictures/20210529_2628056321616605660.png")
-        startActivityForResult(intent2,59)
-
     }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
-    {
-        super.onActivityResult(
-            requestCode,
-            resultCode,
-            data
-        ) // requestCode : 어느 Intent에 대해서 넘어온 것인지 확인가능.  if(requestCode==123){
-        if(resultCode == RESULT_OK){
-            Log.i("인텐트 답장", "${data?.getStringExtra("path")}")
-        }else{
-
-        }
-    }
-
-    //--------------------------------------임시 코드--------------------------------------------//
 }
