@@ -15,14 +15,15 @@
         android:background="@drawable/layout_rec">
 
         //**아이콘
+
         <ImageView
             android:id="@+id/ImageIcon"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/edit_rec"
-            android:backgroundTint="#FBA5A5"
-            app:srcCompat="@drawable/ic_baseline_access_alarm_24" />
+            android:background="@drawable/edit_round"
+            android:backgroundTint="#FFEDED"
+            app:srcCompat="@drawable/icon_1" />
         //**
 
         <TextView
@@ -106,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/kotra_bold_ttf"
-                android:text=" 제목 "
+                android:text="요약 "
                 android:textSize="24dp"
                 android:textStyle="bold" />
 
@@ -116,30 +117,6 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/edit_rec"
                 android:maxLines="1"
-                android:text="" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/layout_round"
-            android:orientation="vertical"
-            android:padding="15dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/kotra_bold_ttf"
-                android:text=" 내용 "
-                android:textSize="24dp"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/EditMemo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/edit_rec"
                 android:text="" />
 
         </LinearLayout>
@@ -179,14 +156,6 @@
         </LinearLayout>
 
         //******임시 텍스트뷰
-        <TextView
-            android:id="@+id/TempText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:gravity="center"
-            android:text="임시 텍스트 뷰" />
         //*******
 
         <androidx.recyclerview.widget.RecyclerView

@@ -23,14 +23,14 @@ class MainActivityC : AppCompatActivity() {
     //
     var ADD_REQUEST = 0
 
-    //*알람 관련 변수들
+    //**알람 관련 변수들
     var mymemo = ""
     var myampm = ""
     var myhour = 0
     var mymin = 0
     var message = ""
     var alarmflag = 0
-    //*
+    //**
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +94,7 @@ class MainActivityC : AppCompatActivity() {
 
         //****날짜 버튼**** -> 뒤로가기 기능.
         binding.TextDate.setOnClickListener {
-            binding.TempText.setText("날짜 눌림")
+
         }
         //****날짜 버튼****
 
@@ -102,10 +102,10 @@ class MainActivityC : AppCompatActivity() {
         //전날, 다음날로 각각 넘겨진다.
         binding.apply {
             LeftBtn.setOnClickListener {
-                binding.TempText.setText("왼쪽 버튼 눌림")
+
             }
             RightBtn.setOnClickListener {
-                binding.TempText.setText("오른쪽 버튼 눌림")
+
             }
         }
         //*****왼쪽, 오른쪽 버튼******
@@ -188,10 +188,10 @@ class MainActivityC : AppCompatActivity() {
             //**임시 - 더미 액티비티에서 받은 Request 값
             ADD_REQUEST->{
                 if(resultCode == 1){
-                    binding.TempText.setText("Request 1번 무사히 받음")
+
                 }
                 else if(resultCode == 2){
-                    binding.TempText.setText("Request 2번 무사히 받음")
+
                 }
             }
             //**임시 - 무사히 받는 것을 확인
