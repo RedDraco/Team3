@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,17 +17,18 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.example.team3.databinding.FragmentPictureBinding
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class PictureFragment : Fragment() {
+class PictureFragment(var memoPath:String, val flag:Int) : Fragment() {
 
     var binding: FragmentPictureBinding?= null
     val IMAGECAP = 10
     val IMAGEGAL = 11
-    var currentPhotoPath:String = ""
+    var currentPhotoPath:String = ""//
     var outBitmap:Bitmap? = null
     val tempURI = arrayListOf<Uri>()
 
@@ -43,6 +45,7 @@ class PictureFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        init()
 
         binding!!.apply {
 
@@ -68,15 +71,53 @@ class PictureFragment : Fragment() {
             }
 
             pSaveBtn.setOnClickListener {
-
+                Log.i("flag", "$flag")
+                var photoFile:File? = null
+                when(flag){
+                    AddMemo.NEWMEMO->{
+                        photoFile = createImageFile()
+                    }
+                    AddMemo.MODIFYTEXT->{
+                        val oldFile = File(memoPath)
+                        oldFile.delete()
+                        photoFile = createImageFile()
+                        memoPath = photoFile.absolutePath
+                    }
+                    AddMemo.MODIFYPICTURE->{
+                        photoFile = File(memoPath)
+                    }
+                    AddMemo.MODIFYDRAWING ->{
+                        val oldFile = File(memoPath)
+                        oldFile.delete()
+                        photoFile = createImageFile()
+                        memoPath = photoFile.absolutePath
+                    }
+                }
                 if(outBitmap != null){
-                    val photoFile = createImageFile()
                     val fout = FileOutputStream(photoFile)
                     outBitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, fout)
                     fout.close()
                     Toast.makeText(requireContext(), "저장 완료", Toast.LENGTH_SHORT).show()
+                    Log.i("주소", "$memoPath")
                 }
+                val resultIntent = Intent()
+                resultIntent.putExtra("path", memoPath)
+                requireActivity().setResult(RESULT_OK, resultIntent)
+                requireActivity().finish()
             }
+        }
+    }
+
+    private fun init() {
+        if(flag == AddMemo.MODIFYPICTURE){
+
+            val jpgFile = File(memoPath) //파일 경로 -> File 객체
+            val photoURI = FileProvider.getUriForFile(context!!, "com.example.team3.fileProvider", jpgFile) //파일 객체 -> uri 객체
+            val sourceBitmap = ImageDecoder.createSource(requireActivity().contentResolver, photoURI) //uri 객체 -> ImageDecoder.Source 객체
+            val tempBitmap = ImageDecoder.decodeBitmap(sourceBitmap) //ImageDecoder.Source 객체 -> Bitmap 객체
+            val newBitmap = tempBitmap.copy(Bitmap.Config.ARGB_8888, true) //Read-Only Bitmap 객체 -> 복사 -> Writable Bitmap 객체
+            binding!!.uploadImage.setImageBitmap(newBitmap)
+            outBitmap = newBitmap
         }
     }
 
