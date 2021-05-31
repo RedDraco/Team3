@@ -1,4 +1,4 @@
-package com.example.calenderapp_1
+package com.example.team3
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

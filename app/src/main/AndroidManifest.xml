@@ -28,7 +28,7 @@
 
         <activity android:name=".AddMemo"></activity>
         <activity android:name=".SettingActivity"></activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivityC">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
