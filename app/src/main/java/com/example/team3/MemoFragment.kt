@@ -1,6 +1,9 @@
 package com.example.team3
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,20 +11,21 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.team3.databinding.FragmentMemoBinding
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.PrintWriter
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class MemoFragment : Fragment() {
+class MemoFragment(var memoPath:String, val flag:Int) : Fragment() {
     var binding: FragmentMemoBinding?= null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+
         binding = FragmentMemoBinding.inflate(layoutInflater)
         return binding!!.root
     }
@@ -29,6 +33,7 @@ class MemoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        init()
 
         binding!!.apply {
 
@@ -46,8 +51,24 @@ class MemoFragment : Fragment() {
 //            }
 
             mSaveBtn.setOnClickListener {
-                val txtFile = createTxtFile()
-                val fout = FileOutputStream(txtFile)
+
+                var txtFile:File? = null
+                when(flag){
+                    AddMemo.NEWMEMO->{
+                        txtFile = createTxtFile()
+                    }
+                    AddMemo.MODIFYTEXT->{
+                        txtFile = File(memoPath)
+                    }
+                    in AddMemo.MODIFYPICTURE..AddMemo.MODIFYDRAWING ->{
+                        val oldFile = File(memoPath)
+                        oldFile.delete()
+                        txtFile = createTxtFile()
+                        memoPath = txtFile.absolutePath
+                    }
+                }
+
+                val fout = FileOutputStream(txtFile!!)
                 val writer = PrintWriter(fout)
 
                 writer.println(editMemo.text.toString())
@@ -55,10 +76,26 @@ class MemoFragment : Fragment() {
                 fout.close()
 
                 Toast.makeText(requireContext(), "저장 완료", Toast.LENGTH_SHORT).show()
+                Log.i("주소", "$memoPath")
+
+                val resultIntent = Intent()
+                resultIntent.putExtra("path", memoPath)
+                requireActivity().setResult(RESULT_OK, resultIntent)
+                requireActivity().finish()
             }
-
         }
+    }
 
+    private fun init() {
+        if(flag == AddMemo.MODIFYTEXT){
+            val scan = Scanner(FileInputStream(memoPath))
+            var myString:String = ""
+            while(scan.hasNextLine()){
+                myString += scan.nextLine() + "\n"
+            }
+            binding!!.editMemo.setText(myString)
+            scan.close()
+        }
     }
 
     fun createTxtFile(): File {
@@ -68,7 +105,7 @@ class MemoFragment : Fragment() {
         val storageDir = requireActivity().getExternalFilesDir(null)
         //Prefix : imageFilename, Suffix : .jpg, Directory : storageDir
         val txtFile = File.createTempFile(imageFileName, ".txt", storageDir)
-
+        memoPath = txtFile.absolutePath
         return txtFile
     }
 
