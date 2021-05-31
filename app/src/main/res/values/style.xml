@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="DefaultTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="toolbarColor">@color/black</item>
+        <item name="toolbarTextColor">@color/white</item>
+        <item name="android:statusBarColor">@color/purple_200</item>
+        <item name="backgroundColor">@color/white</item>
+        <item name="textColor">@color/black</item>
+        <item name="subtextColor">@color/grey_3</item>
+        <item name="edgeColor">@color/grey_2</item>
+    </style>
+    <style name="LightTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="toolbarColor">@color/grey_1</item>
+        <item name="toolbarTextColor">@color/black</item>
+        <item name="android:statusBarColor">@color/purple_200</item>
+        <item name="backgroundColor">@color/white</item>
+        <item name="textColor">@color/black</item>
+        <item name="subtextColor">@color/grey_3</item>
+        <item name="edgeColor">@color/grey_2</item>
+    </style>
+    <style name="DarkTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="toolbarColor">@color/black</item>
+        <item name="toolbarTextColor">@color/white</item>
+        <item name="android:statusBarColor">@color/purple_200</item>
+        <item name="backgroundColor">@color/black</item>
+        <item name="textColor">@color/white</item>
+        <item name="subtextColor">@color/grey_3</item>
+        <item name="edgeColor">@color/white</item>
+    </style>
+</resources>

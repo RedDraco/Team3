@@ -2,10 +2,10 @@ package com.example.team3
 
 import android.app.Activity
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.example.team3.databinding.ActivityPwdBinding
 
 class PwdActivity : AppCompatActivity() {
@@ -14,6 +14,15 @@ class PwdActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val userTheme = MyApplication.prefs.getString("theme", "default")
+        when (userTheme){
+            "default"->setTheme(R.style.DefaultTheme)
+            "light"->setTheme(R.style.LightTheme)
+            "dark"->setTheme(R.style.DarkTheme)
+            else->setTheme(R.style.DefaultTheme)
+        }
+
         binding = ActivityPwdBinding.inflate(layoutInflater)
         setContentView(binding.root)
         init()
@@ -76,7 +85,7 @@ class PwdActivity : AppCompatActivity() {
         binding.apply {
             val pwd = pwd1.text.toString() + pwd2.text.toString() + pwd3.text.toString() + pwd4.text.toString()
             MyApplication.prefs.setString("password",pwd)
-       }
+        }
         Log.d("확인", "비밀번호는 "+ MyApplication.prefs.getString("password", ""))
     }
 

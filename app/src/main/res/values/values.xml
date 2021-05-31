@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr format="color" name="edgeColor"/>
+    <attr format="color" name="toolbarColor"/>
+    <attr format="color" name="toolbarTextColor"/>
+    <attr format="color" name="textColor"/>
+    <attr format="color" name="subtextColor"/>
+</resources>
