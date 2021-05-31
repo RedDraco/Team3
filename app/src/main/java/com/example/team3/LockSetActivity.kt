@@ -2,11 +2,11 @@ package com.example.team3
 
 import android.app.Activity
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.example.team3.databinding.ActivityLockSetBinding
 
 class LockSetActivity : AppCompatActivity() {
@@ -17,6 +17,15 @@ class LockSetActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val userTheme = MyApplication.prefs.getString("theme", "default")
+        when (userTheme){
+            "default"->setTheme(R.style.DefaultTheme)
+            "light"->setTheme(R.style.LightTheme)
+            "dark"->setTheme(R.style.DarkTheme)
+            else->setTheme(R.style.DefaultTheme)
+        }
+
         binding  = ActivityLockSetBinding.inflate(layoutInflater)
         setContentView(binding.root)
         init()
