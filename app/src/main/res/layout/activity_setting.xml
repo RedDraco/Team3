@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".SettingActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/toolbarColor">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="환경설정"
+            android:textAlignment="center"
+            android:textColor="?attr/toolbarTextColor"
+            android:textSize="22sp" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <!--    <TextView-->
+    <!--        android:id="@+id/textView"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:background="@color/black"-->
+    <!--        android:paddingVertical="15dp"-->
+    <!--        android:text="환경설정"-->
+    <!--        android:textAlignment="center"-->
+    <!--        android:textColor="@color/white"-->
+    <!--        android:textSize="22sp" />-->
+
+    <LinearLayout
+        android:id="@+id/backLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="?attr/backgroundColor">
+
+        <TextView
+            android:id="@+id/changeTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edge_under"
+            android:padding="15dp"
+            android:text="테마 변경"
+            android:textColor="?attr/textColor"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/setLock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edge_under"
+            android:padding="15dp"
+            android:text="잠금 설정"
+            android:textColor="?attr/textColor"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/setNotification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edge_under"
+            android:padding="15dp"
+            android:text="알림 설정"
+            android:textColor="?attr/textColor"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</LinearLayout>

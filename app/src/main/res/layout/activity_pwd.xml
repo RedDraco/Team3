@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".PwdActivity"
+    android:background="?attr/backgroundColor">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="비밀번호 설정"
+        android:textAlignment="center"
+        android:textColor="?attr/textColor"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="비밀번호를 입력하세요"
+        android:textAlignment="center"
+        android:textColor="?attr/subtextColor"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="25dp">
+
+        <EditText
+            android:id="@+id/pwd1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:backgroundTint="?attr/textColor"
+            android:textColor="?attr/textColor"
+            android:textAlignment="center" />
+
+        <EditText
+            android:id="@+id/pwd2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:backgroundTint="?attr/textColor"
+            android:textColor="?attr/textColor"
+            android:textAlignment="center" />
+
+        <EditText
+            android:id="@+id/pwd3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:backgroundTint="?attr/textColor"
+            android:textColor="?attr/textColor"
+            android:textAlignment="center" />
+
+        <EditText
+            android:id="@+id/pwd4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:backgroundTint="?attr/textColor"
+            android:textColor="?attr/textColor"
+            android:textAlignment="center" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_set"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:backgroundTint="?attr/toolbarTextColor"
+        android:paddingHorizontal="45dp"
+        android:paddingVertical="5dp"
+        android:text="설정"
+        android:textSize="18sp"
+        android:textColor="?attr/toolbarColor"
+        app:cornerRadius="15dp" />
+</LinearLayout>
