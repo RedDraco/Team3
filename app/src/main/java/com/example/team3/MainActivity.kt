@@ -19,7 +19,6 @@ open class MainActivity : AppCompatActivity() {
         binding.navigationView.itemIconTintList = null
         setContentView(binding.root)
 
-
         init()
     }
 
