@@ -37,8 +37,8 @@ class MainActivityC : AppCompatActivity() {
         binding = ActivityMaincBinding.inflate(layoutInflater)
         iconBinding = IcondlgBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        init()
         initData()
+        init()
         initIconRecycler()
     }
 
@@ -68,6 +68,7 @@ class MainActivityC : AppCompatActivity() {
 
     private fun init(){
 
+
         //****아이콘 버튼****
         binding.ImageIcon.setOnClickListener {
 
@@ -75,10 +76,6 @@ class MainActivityC : AppCompatActivity() {
 
             icondlgBuilder.setView(iconBinding.root)
                 .setPositiveButton("확인"){
-                        _,_->
-                    //아무것도 안한다.
-                }
-                .setNegativeButton("취소"){
                         _,_->
                     //아무것도 안한다.
                 }
