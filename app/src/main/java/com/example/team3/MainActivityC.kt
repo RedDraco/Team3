@@ -10,8 +10,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.team3.DummyActivity
-import com.example.team3.R
 import com.example.team3.databinding.*
 import java.util.*
 
@@ -23,7 +21,7 @@ class MainActivityC : AppCompatActivity() {
 
 
     //
-    var DUMMY_REQUEST = 0
+    var ADD_REQUEST = 0
 
     //*알람 관련 변수들
     var mymemo = ""
@@ -116,8 +114,8 @@ class MainActivityC : AppCompatActivity() {
         //*****추가버튼*****
         binding.Plusbtn.setOnClickListener {
             //여기다가 하루 추가 액티비티 연결.
-            val intent = Intent(this, DummyActivity::class.java)
-            startActivityForResult(intent, DUMMY_REQUEST)
+            val intent = Intent(this, AddMemo::class.java)
+            startActivityForResult(intent, ADD_REQUEST)
         }
         //*****추가버튼*****
 
@@ -188,7 +186,7 @@ class MainActivityC : AppCompatActivity() {
         when(requestCode){
 
             //**임시 - 더미 액티비티에서 받은 Request 값
-            DUMMY_REQUEST->{
+            ADD_REQUEST->{
                 if(resultCode == 1){
                     binding.TempText.setText("Request 1번 무사히 받음")
                 }
