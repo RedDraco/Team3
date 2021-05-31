@@ -23,13 +23,17 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        val intent = Intent(this, SettingActivity::class.java)
+        val settingIntent = Intent(this, SettingActivity::class.java)
+        val calendarIntent = Intent(this, MainActivityC::class.java)
         binding.apply {
             imageMenu.setOnClickListener {
                 drawerLayout.openDrawer(GravityCompat.START)
             }
             settingBtn.setOnClickListener {
-                startActivity(intent)
+                startActivity(settingIntent)
+            }
+            calendarView3.setOnDateChangeListener { view, year, month, dayOfMonth ->
+                startActivity(calendarIntent)
             }
         }
     }
