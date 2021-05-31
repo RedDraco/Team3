@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.team3.databinding.*
 import java.util.*
 
@@ -18,7 +19,6 @@ class MainActivityC : AppCompatActivity() {
     lateinit var binding: ActivityMaincBinding
     lateinit var iconBinding:IcondlgBinding
     lateinit var iconAdapter: IconAdapter
-
 
     //
     var ADD_REQUEST = 0
@@ -52,7 +52,7 @@ class MainActivityC : AppCompatActivity() {
     }
 
     private fun initIconRecycler(){
-        iconBinding.iconRecycler.layoutManager = GridLayoutManager(this, 3)
+        iconBinding.iconRecycler.layoutManager =  GridLayoutManager(this, 3)
         iconAdapter = IconAdapter(this, iconList)
 
         iconAdapter.itemClickListener = object :IconAdapter.OnItemClickListener{

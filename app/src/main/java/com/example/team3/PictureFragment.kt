@@ -32,7 +32,6 @@ class PictureFragment(var memoPath:String, val flag:Int) : Fragment() {
     var outBitmap:Bitmap? = null
     val tempURI = arrayListOf<Uri>()
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

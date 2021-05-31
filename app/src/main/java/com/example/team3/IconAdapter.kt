@@ -11,7 +11,7 @@ class IconAdapter(val context: Context, val iconList : ArrayList<IconData>) :
         RecyclerView.Adapter<IconAdapter.ViewHolder>(){
 
     interface OnItemClickListener{
-        fun OnItemClick(holder:ViewHolder, view:View, iconData: IconData, position: Int)
+        fun OnItemClick(holder:ViewHolder, view:View, data: IconData, position: Int)
     }
 
     var itemClickListener:OnItemClickListener?=null
@@ -20,8 +20,13 @@ class IconAdapter(val context: Context, val iconList : ArrayList<IconData>) :
         val iconImage : ImageView =itemView.findViewById(R.id.iconimageView)
 
         fun bind(iconData: IconData, context: Context){
-            val resourceId = context.resources.getIdentifier(iconData.photo, "drawable", context.packageName)
-            iconImage.setImageResource(resourceId)
+            if(iconData.photo != "") {
+                val resourceId =
+                    context.resources.getIdentifier(iconData.photo, "drawable", context.packageName)
+                iconImage.setImageResource(resourceId)
+            }else{
+                iconImage.setImageResource(R.mipmap.ic_launcher)
+            }
         }
 
         init {
@@ -32,7 +37,7 @@ class IconAdapter(val context: Context, val iconList : ArrayList<IconData>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.icon_item, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.icon_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -41,6 +46,6 @@ class IconAdapter(val context: Context, val iconList : ArrayList<IconData>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(iconList[position], context)
+        holder?.bind(iconList[position], context)
     }
 }
