@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -181,17 +182,15 @@ class MainActivityC : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when(requestCode){
-
-            //**임시 - 더미 액티비티에서 받은 Request 값
             ADD_REQUEST->{
-                if(resultCode == 1){
-
-                }
-                else if(resultCode == 2){
-
+                if(resultCode == Activity.RESULT_OK){
+                    if(data?.hasExtra("path")!!){
+                        Log.i("MainActivityC", "has extra")
+                        var PATH = data?.getStringExtra("path")!!
+                        Log.i("MainActivityC", "$PATH")
+                    }
                 }
             }
-            //**임시 - 무사히 받는 것을 확인
         }
     }
 
