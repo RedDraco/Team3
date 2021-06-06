@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:title="일정" />
+    <item
+        android:id="@+id/nav_explain"
+        android:title="메모" />
+
+    <item
+        android:id="@+id/nav_settings"
+        android:title="가계부" />
+</menu>

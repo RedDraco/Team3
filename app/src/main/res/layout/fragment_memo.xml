@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MemoFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Button"
+            android:visibility="invisible"/>
+
+        <ImageButton
+            android:id="@+id/mSaveBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_menu_save"
+            android:tint="@color/black"
+            android:backgroundTint="@color/purple_200"/>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/editMemo"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        android:scrollHorizontally="true"
+        android:background="@android:color/transparent"
+        android:autoLink="web|email|phone"
+        android:bufferType="spannable"
+        android:gravity="left"
+        android:hint="클릭해서 입력" />
+
+
+</LinearLayout>
