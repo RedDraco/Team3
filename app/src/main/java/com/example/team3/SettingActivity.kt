@@ -7,6 +7,7 @@ import com.example.team3.databinding.ActivitySettingBinding
 
 class SettingActivity : AppCompatActivity() {
     lateinit var binding: ActivitySettingBinding
+    //val compArr = arrayOf("TextView", "Button", "RadioButton", "Switch", "EditText")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,6 +17,9 @@ class SettingActivity : AppCompatActivity() {
             "default"->setTheme(R.style.DefaultTheme)
             "light"->setTheme(R.style.LightTheme)
             "dark"->setTheme(R.style.DarkTheme)
+            "pink"->setTheme(R.style.PinkTheme)
+            "purple"->setTheme(R.style.PurpleTheme)
+            "brown"->setTheme(R.style.BrownTheme)
             else->setTheme(R.style.DefaultTheme)
         }
 
@@ -39,7 +43,6 @@ class SettingActivity : AppCompatActivity() {
                 val intent = Intent(this@SettingActivity, NotfSetActivity::class.java)
                 startActivity(intent)
             }
-
 
         }
     }

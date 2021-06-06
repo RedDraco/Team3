@@ -42,70 +42,104 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/backgroundColor"
-        android:orientation="vertical"
         android:paddingTop="10dp">
 
         <RadioGroup
             android:id="@+id/radioGroup"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="10dp">
 
             <RadioButton
                 android:id="@+id/defaultRgBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="80dp"
                 android:layout_weight="1"
-                android:text="일반 모드"
+                android:text="기본 테마"
                 android:textColor="?attr/textColor" />
 
             <RadioButton
                 android:id="@+id/lightRgBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_height="80dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="라이트 모드"
+                android:text="라이트 테마"
                 android:textColor="?attr/textColor" />
 
             <RadioButton
                 android:id="@+id/darkRgBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_height="80dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="다크 모드"
+                android:paddingVertical="20dp"
+                android:text="다크 테마"
                 android:textColor="?attr/textColor" />
+
+            <RadioButton
+                android:id="@+id/pinkRgBtn"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:paddingVertical="20dp"
+                android:text="핑크 테마"
+                android:textColor="?attr/textColor"/>
+
+            <RadioButton
+                android:id="@+id/purpleRgBtn"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:paddingVertical="20dp"
+                android:text="보라 테마"
+                android:textColor="?attr/textColor"/>
+
+            <RadioButton
+                android:id="@+id/brownRgBtn"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:paddingVertical="20dp"
+                android:text="브라운 테마"
+                android:textColor="?attr/textColor"/>
 
         </RadioGroup>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <Button
                 android:id="@+id/defaultBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="160dp"
+                android:layout_width="180dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/white"
                 android:text="Default"
                 android:textColor="@color/black"
-                app:cornerRadius="15dp" />
+                app:cornerRadius="15dp"
+                app:iconPadding="0dp" />
 
             <Button
                 android:id="@+id/lightBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="160dp"
+                android:layout_width="180dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
                 android:layout_weight="1"
                 android:backgroundTint="#F2F2F2"
                 android:text="light"
@@ -114,13 +148,58 @@
 
             <Button
                 android:id="@+id/darkBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="160dp"
+                android:layout_width="180dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:text="Dark"
+                app:cornerRadius="15dp" />
+
+            <Button
+                android:id="@+id/pinkBtn"
+                android:layout_width="180dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:backgroundTint="#E0A2A2"
+                android:text="PINK"
+                app:cornerRadius="15dp" />
+
+            <Button
+                android:id="@+id/purpleBtn"
+                android:layout_width="180dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:backgroundTint="#C6B5ED"
+                android:text="PURPLE"
+                app:cornerRadius="15dp" />
+
+            <Button
+                android:id="@+id/brownBtn"
+                android:layout_width="180dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:backgroundTint="#B8AEA4"
+                android:text="BROWN"
                 app:cornerRadius="15dp" />
 
         </LinearLayout>

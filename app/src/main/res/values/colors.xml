@@ -10,4 +10,16 @@
     <color name="grey_1">#FFF2F2F2</color>
     <color name="grey_2">#FFDCDCDC</color>
     <color name="grey_3">#7F7F7F</color>
+    <color name="pink_1">#FFD7D7</color>
+    <color name="pink_2">#E0A2A2</color>
+    <color name="pink_3">#915858</color>
+    <color name="pink_4">#482C2C</color>
+    <color name="brown_1">#F4EFE4</color>
+    <color name="brown_2">#B8AEA4</color>
+    <color name="brown_3">#7B7167</color>
+    <color name="brown_4">#3D3833</color>
+    <color name="purple_1">#E7E0F8</color>
+    <color name="purple_2">#C6B5ED</color>
+    <color name="purple_3">#9D86DE</color>
+    <color name="purple_4">#321D6D</color>
 </resources>
