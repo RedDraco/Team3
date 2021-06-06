@@ -18,6 +18,9 @@ class NotfSetActivity : AppCompatActivity() {
             "default"->setTheme(R.style.DefaultTheme)
             "light"->setTheme(R.style.LightTheme)
             "dark"->setTheme(R.style.DarkTheme)
+            "pink"->setTheme(R.style.PinkTheme)
+            "purple"->setTheme(R.style.PurpleTheme)
+            "brown"->setTheme(R.style.BrownTheme)
             else->setTheme(R.style.DefaultTheme)
         }
 
@@ -27,18 +30,27 @@ class NotfSetActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create the NotificationChannel
-            val name = "notification"
-            val descriptionText = "알림"
-            val channelId = "channel_id"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val mChannel = NotificationChannel(channelId, name, importance)
-            mChannel.description = descriptionText
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(mChannel)
+        binding.apply {
+            rbPriority.setOnCheckedChangeListener { group, checkedId ->
+                when (checkedId){
+                    R.id.rb_min->{
+                        //NotificationManager에서는 1, NotificationCompat에서는 -2
+                        MyApplication.prefs.setString("priority", "1")
+                    }
+                    R.id.rb_low->{
+                        //NotificationManager에서는 2, NotificationCompat에서는 -1
+                        MyApplication.prefs.setString("priority", "2")
+                    }
+                    R.id.rb_default->{
+                        //NotificationManager에서는 3, NotificationCompat에서는 0
+                        MyApplication.prefs.setString("priority", "3")
+                    }
+                    R.id.rb_high->{
+                        //NotificationManager에서는 4, NotificationCompat에서는 1
+                        MyApplication.prefs.setString("priority", "4")
+                    }
+                }
+            }
         }
     }
 }

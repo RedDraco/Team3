@@ -27,4 +27,31 @@
         <item name="subtextColor">@color/grey_3</item>
         <item name="edgeColor">@color/white</item>
     </style>
+    <style name="PinkTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="toolbarColor">@color/pink_2</item>
+        <item name="toolbarTextColor">@color/white</item>
+        <item name="android:statusBarColor">@color/purple_200</item>
+        <item name="backgroundColor">@color/white</item>
+        <item name="textColor">@color/pink_4</item>
+        <item name="subtextColor">@color/pink_3</item>
+        <item name="edgeColor">@color/pink_1</item>
+    </style>
+    <style name="PurpleTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="toolbarColor">@color/purple_2</item>
+        <item name="toolbarTextColor">@color/white</item>
+        <item name="android:statusBarColor">@color/purple_200</item>
+        <item name="backgroundColor">@color/white</item>
+        <item name="textColor">@color/purple_4</item>
+        <item name="subtextColor">@color/purple_3</item>
+        <item name="edgeColor">@color/purple_1</item>
+    </style>
+    <style name="BrownTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="toolbarColor">@color/brown_2</item>
+        <item name="toolbarTextColor">@color/white</item>
+        <item name="android:statusBarColor">@color/purple_200</item>
+        <item name="backgroundColor">@color/white</item>
+        <item name="textColor">@color/brown_4</item>
+        <item name="subtextColor">@color/brown_3</item>
+        <item name="edgeColor">@color/brown_1</item>
+    </style>
 </resources>

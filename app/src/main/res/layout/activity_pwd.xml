@@ -100,4 +100,16 @@
         android:textSize="18sp"
         android:textColor="?attr/toolbarColor"
         app:cornerRadius="15dp" />
+
+    <TextView
+        android:id="@+id/fingerPrintView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:text="지문으로 잠금 해제"
+        android:textAlignment="center"
+        android:textColor="?attr/subtextColor"
+        android:textSize="14sp" />
+
 </LinearLayout>

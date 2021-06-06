@@ -11,7 +11,7 @@ import com.example.team3.databinding.ActivityLockSetBinding
 
 class LockSetActivity : AppCompatActivity() {
     lateinit var binding: ActivityLockSetBinding
-    var flag = true
+    var flag = true//비밀번호 설정 전
     val CHANGE_PWD_REQUEST = 100
     val CHECK_PWD_REQUEST = 200
 
@@ -23,6 +23,9 @@ class LockSetActivity : AppCompatActivity() {
             "default"->setTheme(R.style.DefaultTheme)
             "light"->setTheme(R.style.LightTheme)
             "dark"->setTheme(R.style.DarkTheme)
+            "pink"->setTheme(R.style.PinkTheme)
+            "purple"->setTheme(R.style.PurpleTheme)
+            "brown"->setTheme(R.style.BrownTheme)
             else->setTheme(R.style.DefaultTheme)
         }
 
@@ -56,19 +59,26 @@ class LockSetActivity : AppCompatActivity() {
                 switch1.isChecked = true
                 setLayout.visibility = View.VISIBLE
             }
+            if (MyApplication.prefs.getString("lock", "false") == "true"){
+                switch2.isChecked = true
+            }else{
+                switch2.isChecked = false
+            }
+
             switch1.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked){
                     setLayout.visibility = View.VISIBLE
-                    if (flag == true){
+                    if (flag){
                         //비밀번호 설정 화면 띄우기
                         val intent = Intent(this@LockSetActivity, PwdActivity::class.java)
                         intent.putExtra("mode", 1)//mode1: 비밀번호 설정
                         startActivity(intent)
-                        flag = false
+                        flag = false//비밀번호 존재
                     }
                 }else{
                     setLayout.visibility = View.INVISIBLE
                     flag = true
+                    MyApplication.prefs.setString("password","")//비밀번호 초기화
                 }
             }
 
@@ -77,9 +87,12 @@ class LockSetActivity : AppCompatActivity() {
                 intent.putExtra("mode", 2)//mode2: 비밀번호 변경
                 startActivityForResult(intent, CHECK_PWD_REQUEST)
             }
+
             switch2.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked){
-
+                    MyApplication.prefs.setString("lock", "true")
+                }else{
+                    MyApplication.prefs.setString("lock", "false")
                 }
             }
         }

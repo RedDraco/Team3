@@ -15,10 +15,13 @@ class ThemeSetActivity : AppCompatActivity() {
             "default"->setTheme(R.style.DefaultTheme)
             "light"->setTheme(R.style.LightTheme)
             "dark"->setTheme(R.style.DarkTheme)
+            "pink"->setTheme(R.style.PinkTheme)
+            "purple"->setTheme(R.style.PurpleTheme)
+            "brown"->setTheme(R.style.BrownTheme)
             else->setTheme(R.style.DefaultTheme)
         }
 
-        binding = com.example.team3.databinding.ActivityThemeSetBinding.inflate(layoutInflater)
+        binding = ActivityThemeSetBinding.inflate(layoutInflater)
         setContentView(binding.root)
         init()
     }
@@ -35,6 +38,15 @@ class ThemeSetActivity : AppCompatActivity() {
                 "dark"->{
                     darkRgBtn.isChecked = true
                 }
+                "pink"->{
+                    pinkRgBtn.isChecked = true
+                }
+                "purple"->{
+                    purpleRgBtn.isChecked = true
+                }
+                "brown"->{
+                    brownRgBtn.isChecked = true
+                }
             }
             radioGroup.setOnCheckedChangeListener { group, checkedId ->
                 when(checkedId){
@@ -47,6 +59,15 @@ class ThemeSetActivity : AppCompatActivity() {
                     R.id.darkRgBtn ->{
                         MyApplication.prefs.setString("theme","dark")
                     }
+                    R.id.pinkRgBtn->{
+                        MyApplication.prefs.setString("theme","pink")
+                    }
+                    R.id.purpleRgBtn->{
+                        MyApplication.prefs.setString("theme","purple")
+                    }
+                    R.id.brownRgBtn->{
+                        MyApplication.prefs.setString("theme","brown")
+                    }
                 }
             }
             defaultBtn.setOnClickListener {
@@ -58,7 +79,17 @@ class ThemeSetActivity : AppCompatActivity() {
             darkBtn.setOnClickListener {
                 darkRgBtn.isChecked = true
             }
+            pinkBtn.setOnClickListener {
+                pinkRgBtn.isChecked = true
+            }
+            purpleBtn.setOnClickListener {
+                purpleRgBtn.isChecked = true
+            }
+            brownBtn.setOnClickListener {
+                brownRgBtn.isChecked = true
+            }
 
         }
     }
+
 }
