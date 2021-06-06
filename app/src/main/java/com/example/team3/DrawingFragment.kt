@@ -2,10 +2,8 @@ package com.example.team3
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.ImageDecoder
+import android.content.res.ColorStateList
+import android.graphics.*
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -70,15 +68,28 @@ class DrawingFragment(var memoPath:String, val flag:Int) : Fragment() {
         binding!!.apply {
 
             penBtn.setOnClickListener{
-                currentCanvasView?.changePen(CanvasView.NORMAL_BLACK)
+                val currentColor = currentCanvasView?.changePen(CanvasView.NORMAL)
+                penBtn.setColorFilter(currentColor!!)
+            }
+
+            sizeUpBtn.setOnClickListener{
+                val currentStrokeSize = currentCanvasView?.changeStrokeSize(true)
+                Toast.makeText(requireActivity(), "펜 사이즈 : $currentStrokeSize", Toast.LENGTH_SHORT).show()
+            }
+
+            sizeDownButton.setOnClickListener{
+                val currentStrokeSize = currentCanvasView?.changeStrokeSize(false)
+                Toast.makeText(requireActivity(), "펜 사이즈 : $currentStrokeSize", Toast.LENGTH_SHORT).show()
             }
 
             eraserBtn.setOnClickListener{
                 currentCanvasView?.changePen(CanvasView.ERASER)
+                penBtn.setColorFilter(Color.BLACK)
             }
 
             refreshBtn.setOnClickListener {
                 currentCanvasView = replaceCanvasView(null)
+                penBtn.setColorFilter(Color.BLACK)
             }
 
             dSaveBtn.setOnClickListener {
@@ -87,6 +98,7 @@ class DrawingFragment(var memoPath:String, val flag:Int) : Fragment() {
                 when(flag){
                     AddMemo.NEWMEMO->{
                         drawingFile = createImageFile()
+                        memoPath = drawingFile.absolutePath
                     }
                     AddMemo.MODIFYTEXT->{
                         val oldFile = File(memoPath)
@@ -102,6 +114,7 @@ class DrawingFragment(var memoPath:String, val flag:Int) : Fragment() {
                     }
                     AddMemo.MODIFYDRAWING -> {
                         drawingFile = File(memoPath)
+                        memoPath = drawingFile.absolutePath
                     }
                 }
 

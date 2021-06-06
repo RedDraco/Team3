@@ -2,15 +2,20 @@ package com.example.team3
 
 import android.content.Context
 import android.graphics.*
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 
 class CanvasView(context: Context?) : View(context) {
 
     companion object{
         const val ERASER:Int = 0
-        const val NORMAL_BLACK:Int = 1
+        const val NORMAL:Int = 1
     }
+    var myStrokeSize = 10f
+    val colorList = arrayListOf<Int>()
+    var colorNum = 0
 
     val paint = Paint()
     val arrayPath = arrayListOf<CustomPath>()
@@ -22,22 +27,50 @@ class CanvasView(context: Context?) : View(context) {
         paint.strokeJoin = Paint.Join.ROUND
         paint.isAntiAlias = true
         paint.strokeWidth = 10f
+
+        colorList.add(Color.BLACK)
+        colorList.add(Color.RED)
+        colorList.add(Color.GREEN)
+        colorList.add(Color.BLUE)
+        colorList.add(Color.CYAN)
+        colorList.add(Color.MAGENTA)
+        colorList.add(Color.YELLOW)
     }
 
     fun loadBitmap(bitmap: Bitmap){
         myBitmap = bitmap
     }
 
-    fun changePen(mode:Int){
+    fun changePen(mode:Int):Int{
         when(mode){
-            NORMAL_BLACK->{
-                paint.color = Color.BLACK
-                paint.strokeWidth = 10f
+            NORMAL->{
+                colorNum++
+                if(colorNum >= colorList.size)
+                    colorNum = 0
+                paint.color = colorList[colorNum]
             }
             ERASER->{
+                colorNum = -1
                 paint.color = Color.WHITE
-                paint.strokeWidth = 30f
             }
+        }
+        return paint.color
+    }
+
+    fun changeStrokeSize(isUp:Boolean):Float{
+        if(isUp){
+            myStrokeSize += 5f
+            if(myStrokeSize > 50f)
+                myStrokeSize = 50f
+            paint.strokeWidth = myStrokeSize
+            return paint.strokeWidth
+        }
+        else{
+            myStrokeSize -= 5f
+            if(myStrokeSize < 5f)
+                myStrokeSize = 5f
+            paint.strokeWidth = myStrokeSize
+            return paint.strokeWidth
         }
     }
 
