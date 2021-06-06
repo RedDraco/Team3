@@ -23,10 +23,17 @@ import java.io.File
 import java.util.*
 
 class MainActivityC() : AppCompatActivity() {
+    private var alarmMgr: AlarmManager?= null
+    private lateinit var alarmIntent : PendingIntent
     var iconList = arrayListOf<IconData>()
     lateinit var binding: ActivityMaincBinding
     lateinit var iconBinding:IcondlgBinding
     lateinit var iconAdapter: IconAdapter
+
+    //*알람 변수
+    var Alarm_Hour = -1
+    var Alarm_Min = -1
+    //*
 
     //
     var ADD_REQUEST = 0
@@ -41,12 +48,10 @@ class MainActivityC() : AppCompatActivity() {
     var PATH = ""
 
     //**알람 관련 변수들
-    var mymemo = ""
     var myampm = ""
-    var myhour = 0
-    var mymin = 0
+    var myhour = ""
+    var mymin = ""
     var message = ""
-    var alarmflag = 0
     //**
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -150,62 +155,32 @@ class MainActivityC() : AppCompatActivity() {
         //*****추가버튼*****
 
         //*****알람*****
-        if(alarmflag == 0){
+        binding.TextAlarm.setOnClickListener {
+
+            //***푸쉬알람
+            setNotfTime(-1, -1)
+
+        }
+        binding.ImageAlarm.setOnClickListener {
+            unSetAlarm()
+            Alarm_Hour = -1
+            Alarm_Min = -1
+            binding.AlarmSwitch.isChecked = false
             binding.TextAlarm.setText("추가하기")
         }
-        binding.TextAlarm.setOnClickListener {
-            val dlgBinding = MypickerdlgBinding.inflate(layoutInflater)
-            val dlgBuilder = AlertDialog.Builder(this)
-            dlgBuilder.setView(dlgBinding.root)
-                //알람 추가 - **미완
-                .setPositiveButton("추가"){
-                        _,_->
-                    alarmflag = 1
-                    mymemo = dlgBinding.EditAlarm.text.toString()
-                    myhour = dlgBinding.timePicker.hour
-                    //오전 오후 설정
-                    if(myhour>=12 && myhour <= 24){
-                        myampm = "오후"
-                    }
-                    else{
-                        myampm = "오전"
-                    }
-                    mymin = dlgBinding.timePicker.minute
-                    mymemo = dlgBinding.EditAlarm.text.toString()
-                    //알람 옆에 텍스트 설정
-                    message = myampm + " " + myhour.toString() + " : " + mymin.toString()
-                    binding.TextAlarm.setText(message)
-                    //스위치 온
-                    binding.AlarmSwitch.isChecked = true
-
-                    //***푸쉬알람
-                    val timerTask = object : TimerTask() {
-                        override fun run() {
-                            makeNotification()
-                        }
-                    }
-                    val timer = Timer()
-                    timer.schedule(timerTask, 2000)
-                    //*** -> 정해진 시간에 오는 알람으로 대체해야함.
-
-                    //toast 메시지 출력
-                    Toast.makeText(this, "알람이 설정되었습니다.", Toast.LENGTH_SHORT).show()
+        binding.AlarmSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked == true) {
+                if (Alarm_Hour < 0 || Alarm_Min < 0) { }
+                else {
+                    setAlarmTime(Alarm_Hour, Alarm_Min)
                 }
-                //알람 취소 버튼
-                .setNegativeButton("취소"){
-                        _,_->
-                    //아무것도 안한다.
+            }
+            if(isChecked == false) {
+                if (Alarm_Hour < 0 || Alarm_Min < 0) { }
+                else {
+                    unSetAlarm()
                 }
-                //알람 삭제
-                .setNeutralButton("삭제"){
-                        _,_->
-                    binding.TextAlarm.setText("추가하기")
-                    //알람이 삭제되면 스위치도 off
-                    binding.AlarmSwitch.isChecked = false
-
-                    Toast.makeText(this, "알람이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-                }
-                .show()
+            }
         }
         //*****알람*****
     }
@@ -344,35 +319,112 @@ class MainActivityC() : AppCompatActivity() {
     }
     //***
 
+    fun setNotfTime(hour: Int, min:Int){
+        if(hour < 0 || min < 0) {
+            val cal = Calendar.getInstance()
+            val timeSetListener =
+                TimePickerDialog.OnTimeSetListener { view: TimePicker?, hourOfDay: Int, minute: Int ->
+                    cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                    cal.set(Calendar.MINUTE, minute)
+                    unSetAlarm()
+                    //****
+                    myhour = view!!.hour.toString()
+                    mymin = view!!.minute.toString()
+                    //오전 오후 설정
+                    if (myhour.toInt() >= 12 && myhour.toInt() <= 24) {
+                        myampm = "오후"
+                    } else {
+                        myampm = "오전"
+                    }
+
+                    if (myhour >= "0" && myhour <= "9") {
+                        myhour = "0" + myhour
+                    } else { }
+
+                    if (mymin >= "0" && mymin <= "9") {
+                        mymin = "0" + mymin
+                    } else { }
+                    //알람 옆에 텍스트 설정
+                    message = myampm + " " + myhour + " : " + mymin
+                    binding.TextAlarm.setText(message)
+                    //스위치 온
+                    binding.AlarmSwitch.isChecked = true
+                    //****
+                    Alarm_Hour = hourOfDay
+                    Alarm_Min = minute
+                    setAlarmTime(Alarm_Hour, Alarm_Min)
+                }
+
+            TimePickerDialog(
+                this, timeSetListener,
+                cal.get(Calendar.HOUR_OF_DAY),
+                cal.get(Calendar.MINUTE), true
+            ).show()
+
+        } else{
+            setAlarmTime(hour, min)
+        }
+    }
+
+
+    private fun setAlarmTime(hour:Int, minute:Int){
+        Log.d("확인", hour.toString() + "시 " + minute.toString())
+        val calender: Calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+        }
+
+        alarmMgr = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmIntent = Intent(this, MyReceiver::class.java).let{
+                intent-> PendingIntent.getBroadcast(this, 0, intent, 0)
+        }
+
+        alarmMgr?.setInexactRepeating(//반복//반복할 필요 없으면 제거
+            AlarmManager.RTC_WAKEUP,
+            calender.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            alarmIntent
+        )
+        //toast 메시지 출력
+        Toast.makeText(this, "알람이 설정되었습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    fun unSetAlarm() {
+        alarmMgr?.cancel(alarmIntent)
+        //toast 메시지 출력
+        Toast.makeText(this, "알람이 취소되었습니다.", Toast.LENGTH_SHORT).show()
+    }
+
     //**미완 - 푸시알림을 띄워주는
     //정해진 시간에 보내기??
-    fun makeNotification(){
-        val id = "MyChannel"
-        val name = "TimeCheckChannel"
-        val notificationChannel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH)
-        notificationChannel.enableVibration(true)
-        notificationChannel.enableLights(true)
-        notificationChannel.lightColor = Color.GREEN
-        notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
-
-        val builder = NotificationCompat.Builder(this, id)
-            .setSmallIcon(R.drawable.ic_baseline_access_alarm_24)
-            .setContentTitle("일정 알람")
-            .setContentText(mymemo)
-            .setAutoCancel(true)
-
-        val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("time", mymemo)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-
-        val pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        builder.setContentIntent(pendingIntent)
-
-        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.createNotificationChannel(notificationChannel)
-        val notification = builder.build()
-        manager.notify(10, notification)
-    }
+//    fun makeNotification(){
+//        val id = "MyChannel"
+//        val name = "TimeCheckChannel"
+//        val notificationChannel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH)
+//        notificationChannel.enableVibration(true)
+//        notificationChannel.enableLights(true)
+//        notificationChannel.lightColor = Color.GREEN
+//        notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+//
+//        val builder = NotificationCompat.Builder(this, id)
+//            .setSmallIcon(R.drawable.ic_baseline_access_alarm_24)
+//            .setContentTitle("일정 알람")
+//            .setContentText(mymemo)
+//            .setAutoCancel(true)
+//
+//        val intent = Intent(this, MainActivityC::class.java)
+//        intent.putExtra("time", mymemo)
+//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+//
+//        val pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+//        builder.setContentIntent(pendingIntent)
+//
+//        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//        manager.createNotificationChannel(notificationChannel)
+//        val notification = builder.build()
+//        manager.notify(10, notification)
+//    }
     //**
 
 

@@ -150,16 +150,24 @@
                     android:id="@+id/TextAlarm"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="5"
                     android:gravity="center"
+                    android:background="@drawable/edit_round"
                     android:text="추가하기"
                     android:textSize="20dp"
                     android:textStyle="bold" />
 
+                <ImageView
+                    android:id="@+id/ImageAlarm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/icon_trash" />
+
                 <Switch
                     android:id="@+id/AlarmSwitch"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:checked="false"
                     android:textSize="20dp" />
 
