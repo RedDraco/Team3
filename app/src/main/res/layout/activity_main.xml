@@ -79,46 +79,61 @@
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
-                <ImageView
-                    android:id="@+id/imageView"
+                <TextView
+                    android:id="@+id/cityNameText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:srcCompat="@tools:sample/avatars" />
+                    android:padding="10dp"
+                    android:text="도시"
+                    android:textAlignment="center"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/weatherImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:srcCompat="@drawable/edge_under" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center_horizontal"
                 android:orientation="vertical">
 
+
                 <EditText
-                    android:id="@+id/city"
+                    android:id="@+id/editCity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:ems="10"
                     android:hint="도시 이름 입력(영어)"
-                    android:inputType="textPersonName"
-                    />
+                    android:inputType="textPersonName" />
 
-
+                <Button
+                    android:id="@+id/getWeatherBtn"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="검색" />
 
                 <TextView
-                    android:id="@+id/weather"
+                    android:id="@+id/weatherText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:text="TextView"
+                    android:text="날씨"
                     android:textAlignment="center"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/temp"
+                    android:id="@+id/tempText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:text="TextView"
+                    android:text="온도"
                     android:textAlignment="center"
                     android:textSize="36sp"
                     android:textStyle="bold" />
