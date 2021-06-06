@@ -4,18 +4,25 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Bundle
+import android.os.Parcel
+import android.os.Parcelable
+import android.text.TextUtils
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.team3.databinding.*
+import java.io.File
 import java.util.*
 
-class MainActivityC : AppCompatActivity() {
+class MainActivityC() : AppCompatActivity() {
     var iconList = arrayListOf<IconData>()
     lateinit var binding: ActivityMaincBinding
     lateinit var iconBinding:IcondlgBinding
@@ -23,6 +30,9 @@ class MainActivityC : AppCompatActivity() {
 
     //
     var ADD_REQUEST = 0
+    var todayDate = ""
+    var SavePATH = ""
+    var PATH = ""
 
     //**알람 관련 변수들
     var mymemo = ""
@@ -38,6 +48,13 @@ class MainActivityC : AppCompatActivity() {
         binding = ActivityMaincBinding.inflate(layoutInflater)
         iconBinding = IcondlgBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val i = intent
+        if(i.hasExtra("path")) {
+            todayDate = "/" + i.getStringExtra("path")!!
+            Log.i("MainActivityC", "$todayDate")
+        }
+
         initData()
         init()
         initIconRecycler()
@@ -113,6 +130,7 @@ class MainActivityC : AppCompatActivity() {
         binding.Plusbtn.setOnClickListener {
             //여기다가 하루 추가 액티비티 연결.
             val intent = Intent(this, AddMemo::class.java)
+            //intent.putExtra("date", "/Today_date")
             startActivityForResult(intent, ADD_REQUEST)
         }
         //*****추가버튼*****
@@ -185,14 +203,121 @@ class MainActivityC : AppCompatActivity() {
             ADD_REQUEST->{
                 if(resultCode == Activity.RESULT_OK){
                     if(data?.hasExtra("path")!!){
-                        Log.i("MainActivityC", "has extra")
-                        var PATH = data?.getStringExtra("path")!!
+                        PATH = data?.getStringExtra("path")!!
                         Log.i("MainActivityC", "$PATH")
+                        val file = File(PATH)
+                        decideExtra(PATH)
+                        //사용한 file은 더 이상 이용하지 않는다. (?)
+                        //계속 저장하다보면 메모리 낭비!!
+                        file.delete()
                     }
                 }
             }
         }
     }
+    //
+
+    //****AddMemo 액비티티에서 전달받은 memoPath의 확장자 확인
+    private fun decideExtra(PATH : String) {
+        if(PATH == "")
+            return
+        else{
+            val splitString = PATH.split('.')
+            val extension = splitString.last()
+
+            //*확장자에 따라 FrameLayout에 동적으로 메모 추가.
+            when(extension){
+                "txt" -> makeTextMemo(PATH)
+                "jpg" -> makePictureMemo(PATH)
+                "png" -> makeDrawingMemo(PATH)
+                else ->  return
+            }
+        }
+    }
+    //****
+
+    //****동적 메모 할당
+    private fun makeDrawingMemo(PATH: String) {
+        setDynamicLL(binding.llDynamic, PATH, 3)
+    }
+
+    private fun makePictureMemo(PATH: String) {
+        setDynamicLL(binding.llDynamic, PATH, 2)
+    }
+
+    private fun makeTextMemo(PATH: String) {
+        setDynamicLL(binding.llDynamic, PATH, 1)
+    }
+    //****동적 메모 할당
+
+    //***Linear 레이아웃에 동적으로 레이아웃을 추가하거나 제거.
+    private fun setDynamicLL(layout : LinearLayout, filepath : String, dflag : Int){
+        val layoutInflater = this.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+
+        if(dflag == 1) {
+            val containTView = layoutInflater.inflate(R.layout.addmemo_text_ll, null)
+            layout.addView(containTView)
+
+            val file = File(filepath)
+            val inputStream = file.inputStream()
+            val text = inputStream.bufferedReader().use{ it.readText() }
+
+            val editText = containTView.findViewById<EditText>(R.id.EditDMemo)
+            editText.setText(text)
+            editText.clearFocus()
+
+            containTView.findViewById<ImageView>(R.id.ImageTrash).setOnClickListener {
+                layout.removeView(containTView)
+            }
+        }
+        else if(dflag == 2) {
+            val containIView = layoutInflater.inflate(R.layout.addmemo_picture_ll, null)
+            layout.addView(containIView)
+
+            val file = File(filepath)
+            val decode = ImageDecoder.createSource(this.contentResolver, Uri.fromFile(file))
+            val bitmap = ImageDecoder.decodeBitmap(decode)
+
+            val imageView = containIView.findViewById<ImageView>(R.id.ImageMemo)
+            imageView.setImageBitmap(bitmap)
+
+            containIView.findViewById<ImageView>(R.id.ImageTrash).setOnClickListener {
+                layout.removeView(containIView)
+            }
+            containIView.findViewById<ImageView>(R.id.ImageFold).setOnClickListener {
+                val imagememo = containIView.findViewById<ImageView>(R.id.ImageMemo)
+                if(imagememo.visibility == View.VISIBLE){
+                    imagememo.visibility = View.GONE
+                } else{
+                    imagememo.visibility = View.VISIBLE
+                }
+            }
+        }
+        else if(dflag == 3) {
+            val containDView = layoutInflater.inflate(R.layout.addmemo_drawing_ll, null)
+            layout.addView(containDView)
+
+            val file = File(filepath)
+            val decode = ImageDecoder.createSource(this.contentResolver, Uri.fromFile(file))
+            val bitmap = ImageDecoder.decodeBitmap(decode)
+
+            val imageView = containDView.findViewById<ImageView>(R.id.DrawingMemo)
+            imageView.setImageBitmap(bitmap)
+
+            containDView.findViewById<ImageView>(R.id.ImageTrash).setOnClickListener {
+                layout.removeView(containDView)
+            }
+            containDView.findViewById<ImageView>(R.id.ImageFold).setOnClickListener {
+                val imagememo = containDView.findViewById<ImageView>(R.id.DrawingMemo)
+                if(imagememo.visibility == View.VISIBLE){
+                    imagememo.visibility = View.GONE
+                } else{
+                    imagememo.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+    //****
 
     //**미완 - 푸시알림을 띄워주는
     //정해진 시간에 보내기??

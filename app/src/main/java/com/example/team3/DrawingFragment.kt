@@ -87,6 +87,7 @@ class DrawingFragment(var memoPath:String, val flag:Int) : Fragment() {
                 when(flag){
                     AddMemo.NEWMEMO->{
                         drawingFile = createImageFile()
+                        memoPath = drawingFile.absolutePath
                     }
                     AddMemo.MODIFYTEXT->{
                         val oldFile = File(memoPath)
@@ -102,6 +103,7 @@ class DrawingFragment(var memoPath:String, val flag:Int) : Fragment() {
                     }
                     AddMemo.MODIFYDRAWING -> {
                         drawingFile = File(memoPath)
+                        memoPath = drawingFile.absolutePath
                     }
                 }
 

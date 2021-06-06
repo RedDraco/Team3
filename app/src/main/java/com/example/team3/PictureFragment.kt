@@ -75,6 +75,7 @@ class PictureFragment(var memoPath:String, val flag:Int) : Fragment() {
                 when(flag){
                     AddMemo.NEWMEMO->{
                         photoFile = createImageFile()
+                        memoPath = photoFile.absolutePath
                     }
                     AddMemo.MODIFYTEXT->{
                         val oldFile = File(memoPath)
@@ -84,6 +85,7 @@ class PictureFragment(var memoPath:String, val flag:Int) : Fragment() {
                     }
                     AddMemo.MODIFYPICTURE->{
                         photoFile = File(memoPath)
+                        memoPath = photoFile.absolutePath
                     }
                     AddMemo.MODIFYDRAWING ->{
                         val oldFile = File(memoPath)
@@ -106,7 +108,7 @@ class PictureFragment(var memoPath:String, val flag:Int) : Fragment() {
                 requireActivity().finish()
             }
         }
-    }
+    }   
 
     private fun init() {
         if(flag == AddMemo.MODIFYPICTURE){
