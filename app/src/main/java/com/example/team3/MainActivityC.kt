@@ -122,7 +122,8 @@ class MainActivityC() : AppCompatActivity() {
 
         //****날짜 버튼**** -> 뒤로가기 기능.
         binding.TextDate.setOnClickListener {
-
+            saveDBDay()
+            this.finish()
         }
         //****날짜 버튼****
 
@@ -372,6 +373,7 @@ class MainActivityC() : AppCompatActivity() {
         val notification = builder.build()
         manager.notify(10, notification)
     }
+    //**
 
 
 }
