@@ -15,6 +15,8 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.text.DecimalFormat
 
+import java.text.SimpleDateFormat
+import java.util.*
 
 open class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -42,10 +44,15 @@ open class MainActivity : AppCompatActivity() {
                 startActivity(settingIntent)
             }
             calendarView3.setOnDateChangeListener { view, year, month, dayOfMonth ->
+                calendarIntent.putExtra("year", year.toString())
+
+                val MONTH = if (month + 1 < 10) "0" + (month + 1) else (month + 1).toString()
+                calendarIntent.putExtra("month", MONTH)
+
+                val DAY = if (dayOfMonth < 10) "0$dayOfMonth" else dayOfMonth.toString()
+                calendarIntent.putExtra("day", DAY)
+
                 startActivity(calendarIntent)
-                calendarIntent.putExtra("year", year)
-                calendarIntent.putExtra("year", month)
-                calendarIntent.putExtra("year", dayOfMonth)
 
             }
             getWeatherBtn.setOnClickListener {

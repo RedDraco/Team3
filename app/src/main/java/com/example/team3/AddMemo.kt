@@ -25,7 +25,6 @@ class AddMemo : AppCompatActivity() {
     var memoPath:String = ""
     var flag = 0
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddMemoBinding.inflate(layoutInflater)

@@ -1,17 +1,18 @@
 package com.example.team3
 
 import android.content.Context
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 
-class IconAdapter(val context: Context, val iconList : ArrayList<IconData>) :
+class IconAdapter(val context: Context ,val iconList : ArrayList<IconData>) :
         RecyclerView.Adapter<IconAdapter.ViewHolder>(){
 
     interface OnItemClickListener{
-        fun OnItemClick(holder:ViewHolder, view:View, iconData: IconData, position: Int)
+        fun OnItemClick(holder:ViewHolder, view:View, data: IconData, position: Int)
     }
 
     var itemClickListener:OnItemClickListener?=null
@@ -20,8 +21,13 @@ class IconAdapter(val context: Context, val iconList : ArrayList<IconData>) :
         val iconImage : ImageView =itemView.findViewById(R.id.iconimageView)
 
         fun bind(iconData: IconData, context: Context){
-            val resourceId = context.resources.getIdentifier(iconData.photo, "drawable", context.packageName)
-            iconImage.setImageResource(resourceId)
+            if(iconData.photo != "") {
+                val resourceId =
+                    context.resources.getIdentifier(iconData.photo, "drawable", context.packageName)
+                iconImage.setImageResource(resourceId)
+            }else{
+                iconImage.setImageResource(R.mipmap.ic_launcher)
+            }
         }
 
         init {

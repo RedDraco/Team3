@@ -32,7 +32,6 @@ class PictureFragment(var memoPath:String, val flag:Int) : Fragment() {
     var outBitmap:Bitmap? = null
     val tempURI = arrayListOf<Uri>()
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -103,13 +102,14 @@ class PictureFragment(var memoPath:String, val flag:Int) : Fragment() {
                     Log.i("주소", "$memoPath")
                     Log.i("주소", "memoPath")
                 }
+                Log.i("주소", "주소 : $memoPath")
                 val resultIntent = Intent()
                 resultIntent.putExtra("path", memoPath)
                 requireActivity().setResult(RESULT_OK, resultIntent)
                 requireActivity().finish()
             }
         }
-    }
+    }   
 
     private fun init() {
         if(flag == AddMemo.MODIFYPICTURE){
