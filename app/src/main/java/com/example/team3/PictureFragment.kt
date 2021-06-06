@@ -76,6 +76,7 @@ class PictureFragment(var memoPath:String, val flag:Int) : Fragment() {
                 when(flag){
                     AddMemo.NEWMEMO->{
                         photoFile = createImageFile()
+                        memoPath = photoFile.absolutePath
                     }
                     AddMemo.MODIFYTEXT->{
                         val oldFile = File(memoPath)
@@ -85,6 +86,7 @@ class PictureFragment(var memoPath:String, val flag:Int) : Fragment() {
                     }
                     AddMemo.MODIFYPICTURE->{
                         photoFile = File(memoPath)
+                        memoPath = photoFile.absolutePath
                     }
                     AddMemo.MODIFYDRAWING ->{
                         val oldFile = File(memoPath)
@@ -99,6 +101,7 @@ class PictureFragment(var memoPath:String, val flag:Int) : Fragment() {
                     fout.close()
                     Toast.makeText(requireContext(), "저장 완료", Toast.LENGTH_SHORT).show()
                     Log.i("주소", "$memoPath")
+                    Log.i("주소", "memoPath")
                 }
                 val resultIntent = Intent()
                 resultIntent.putExtra("path", memoPath)

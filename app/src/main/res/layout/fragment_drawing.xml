@@ -22,6 +22,35 @@
             android:tint="@color/black"
             android:backgroundTint="@color/purple_200"/>
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/sizeUpBtn"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/purple_200"
+                android:src="@drawable/arrow_up"
+                android:tint="@color/black"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"/>
+
+            <ImageButton
+                android:id="@+id/sizeDownButton"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/purple_200"
+                android:src="@drawable/arrow_down"
+                android:tint="@color/black"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"/>
+        </LinearLayout>
+
         <ImageButton
             android:id="@+id/eraserBtn"
             android:layout_width="0dp"
@@ -58,9 +87,7 @@
         android:id="@+id/canvasFrame"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="9">
-
-    </FrameLayout>
+        android:layout_weight="9" />
 
 
 </LinearLayout>
