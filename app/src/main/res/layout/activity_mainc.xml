@@ -124,6 +124,7 @@
                     android:maxLines="1"
                     android:padding="5dp"
                     android:imeOptions="actionDone"
+                    android:focusableInTouchMode="true"
                     android:text="" />
 
             </LinearLayout>
@@ -134,6 +135,7 @@
                 android:background="@drawable/layout_round"
                 android:orientation="horizontal"
                 android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:padding="10dp">
 
                 <TextView

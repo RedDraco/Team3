@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/layout_round"
     android:layout_marginTop="5dp"
+    android:layout_marginBottom= "5dp"
     android:padding="10dp">
 
     <LinearLayout
@@ -28,6 +29,7 @@
             android:maxLines="1"
             android:ems="10"
             android:layout_weight="5"
+            android:focusableInTouchMode="true"
             android:text="" />
 
         <ImageView

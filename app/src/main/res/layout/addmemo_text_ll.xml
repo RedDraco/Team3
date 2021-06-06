@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/layout_round"
     android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
     android:padding="10dp">
 
     <LinearLayout
@@ -44,6 +45,7 @@
         android:background="@drawable/edit_rec"
         android:padding="5dp"
         android:imeOptions="actionDone"
+        android:focusableInTouchMode="true"
         android:text="" />
 
 </LinearLayout>

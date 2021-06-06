@@ -31,7 +31,13 @@ class MainActivityC() : AppCompatActivity() {
     //
     var ADD_REQUEST = 0
     var todayDate = ""
+    //전 액티비티에서 받아오는 날짜 정보
+    var YEAR = ""
+    var MONTH = ""
+    var DAY = ""
+    //
     var SavePATH = ""
+    //ADDMEMO에서 받아오는 파일 디렉토리
     var PATH = ""
 
     //**알람 관련 변수들
@@ -50,8 +56,12 @@ class MainActivityC() : AppCompatActivity() {
         setContentView(binding.root)
 
         val i = intent
-        if(i.hasExtra("path")) {
-            todayDate = "/" + i.getStringExtra("path")!!
+        if(i.hasExtra("year") && i.hasExtra("month") && i.hasExtra("day")) {
+            YEAR = i.getStringExtra("year")?:""
+            MONTH = i.getStringExtra("month")?:""
+            DAY = i.getStringExtra("day")?:""
+            todayDate = "/" + YEAR + MONTH + DAY
+
             Log.i("MainActivityC", "$todayDate")
         }
 
@@ -86,6 +96,9 @@ class MainActivityC() : AppCompatActivity() {
 
     private fun init(){
 
+        //클릭한 날짜에 따라, 날짜 텍스트 설정
+        binding.TextDate.setText(MONTH + "월 " + DAY + "일")
+
 
         //****아이콘 버튼****
         binding.ImageIcon.setOnClickListener {
@@ -103,7 +116,7 @@ class MainActivityC() : AppCompatActivity() {
 
         //****저장 버튼****
         binding.Savebtn.setOnClickListener {
-
+            saveDBDay()
         }
         //****저장 버튼****
 
@@ -318,6 +331,17 @@ class MainActivityC() : AppCompatActivity() {
         }
     }
     //****
+
+    //***DB에 하루치 모든 정보를 저장. 추후에 불러올때 다시 읽어들인다.
+    private fun saveDBDay() {
+        val dayDir = getExternalFilesDir(null).toString() + todayDate
+        val file = File(dayDir)
+        if(!file.exists()) {
+            file.mkdirs()
+        }
+        Log.i("하루 주소", "${file.absolutePath}")
+    }
+    //***
 
     //**미완 - 푸시알림을 띄워주는
     //정해진 시간에 보내기??
