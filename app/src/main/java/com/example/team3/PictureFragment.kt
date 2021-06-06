@@ -100,6 +100,7 @@ class PictureFragment(var memoPath:String, val flag:Int) : Fragment() {
                     fout.close()
                     Toast.makeText(requireContext(), "저장 완료", Toast.LENGTH_SHORT).show()
                     Log.i("주소", "$memoPath")
+                    Log.i("주소", "memoPath")
                 }
                 Log.i("주소", "주소 : $memoPath")
                 val resultIntent = Intent()
