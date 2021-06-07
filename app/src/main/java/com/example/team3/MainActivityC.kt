@@ -20,6 +20,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.team3.databinding.*
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.util.*
 
 class MainActivityC() : AppCompatActivity() {
@@ -46,6 +49,11 @@ class MainActivityC() : AppCompatActivity() {
     var SavePATH = ""
     //ADDMEMO에서 받아오는 파일 디렉토리
     var PATH = ""
+    //하루 디렉토리 이름.
+    var dayDir = ""
+    var dayTextDir = ""
+    var dayJpgDir = ""
+    var dayPngDir = ""
 
     //**알람 관련 변수들
     var myampm = ""
@@ -69,11 +77,45 @@ class MainActivityC() : AppCompatActivity() {
 
             Log.i("MainActivityC", "$todayDate")
         }
+        initDir()
 
         initData()
         init()
         initIconRecycler()
     }
+
+    //**하루 디렉토리 및 txt, jpg, png 디렉토리 생성.
+    private fun initDir(){
+        dayDir = getExternalFilesDir(null).toString() + todayDate
+        val dayfile = File(dayDir)
+        if(!dayfile.exists()) {
+            dayfile.mkdirs()
+            Log.i("하루 디렉토리", "생성 완료")
+        }
+        Log.i("하루 주소", "${dayfile.absolutePath}")
+        dayTextDir = dayDir + "/" + "TEXT"
+        val dayTextfile = File(dayTextDir)
+        if(!dayTextfile.exists()) {
+            dayTextfile.mkdirs()
+            Log.i("TEXT 디렉토리", "생성 완료")
+        }
+        Log.i("TEXT 주소", "${dayTextfile.absolutePath}")
+        dayJpgDir = dayDir + "/" + "JPG"
+        val dayJpgfile = File(dayJpgDir)
+        if(!dayJpgfile.exists()) {
+            dayJpgfile.mkdirs()
+            Log.i("JPG 디렉토리", "생성 완료")
+        }
+        Log.i("JPG 주소", "${dayJpgfile.absolutePath}")
+        dayPngDir = dayDir + "/" + "PNG"
+        val dayPngfile = File(dayPngDir)
+        if(!dayPngfile.exists()) {
+            dayPngfile.mkdirs()
+            Log.i("PNG 디렉토리", "생성 완료")
+        }
+        Log.i("PNG 주소", "${dayPngfile.absolutePath}")
+    }
+    //**
 
     private fun initData(){
         iconList.add(IconData("icon_1"))
@@ -185,7 +227,7 @@ class MainActivityC() : AppCompatActivity() {
         //*****알람*****
     }
 
-    //액티비티를 돌려받음과 함께 Request정보도 같이 받음
+    //**액티비티를 돌려받음과 함께 Request정보도 같이 받음
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when(requestCode){
@@ -196,15 +238,12 @@ class MainActivityC() : AppCompatActivity() {
                         Log.i("MainActivityC", "$PATH")
                         val file = File(PATH)
                         decideExtra(PATH)
-                        //사용한 file은 더 이상 이용하지 않는다. (?)
-                        //계속 저장하다보면 메모리 낭비!!
-                        file.delete()
                     }
                 }
             }
         }
     }
-    //
+    //**
 
     //****AddMemo 액비티티에서 전달받은 memoPath의 확장자 확인
     private fun decideExtra(PATH : String) {
@@ -243,13 +282,17 @@ class MainActivityC() : AppCompatActivity() {
     private fun setDynamicLL(layout : LinearLayout, filepath : String, dflag : Int){
         val layoutInflater = this.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
-        if(dflag == 1) {
+        if(dflag == 1) { //Text
             val containTView = layoutInflater.inflate(R.layout.addmemo_text_ll, null)
             layout.addView(containTView)
 
             val file = File(filepath)
             val inputStream = file.inputStream()
             val text = inputStream.bufferedReader().use{ it.readText() }
+
+            val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + file.name)
+            val targetPath = Paths.get(dayTextDir + "/" + file.name)
+            Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
 
             val editText = containTView.findViewById<EditText>(R.id.EditDMemo)
             editText.setText(text)
@@ -266,6 +309,10 @@ class MainActivityC() : AppCompatActivity() {
             val file = File(filepath)
             val decode = ImageDecoder.createSource(this.contentResolver, Uri.fromFile(file))
             val bitmap = ImageDecoder.decodeBitmap(decode)
+
+            val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + file.name)
+            val targetPath = Paths.get(dayJpgDir + "/" + file.name)
+            Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
 
             val imageView = containIView.findViewById<ImageView>(R.id.ImageMemo)
             imageView.setImageBitmap(bitmap)
@@ -290,6 +337,10 @@ class MainActivityC() : AppCompatActivity() {
             val decode = ImageDecoder.createSource(this.contentResolver, Uri.fromFile(file))
             val bitmap = ImageDecoder.decodeBitmap(decode)
 
+            val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + file.name)
+            val targetPath = Paths.get(dayPngDir + "/" + file.name)
+            Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
+
             val imageView = containDView.findViewById<ImageView>(R.id.DrawingMemo)
             imageView.setImageBitmap(bitmap)
 
@@ -311,14 +362,15 @@ class MainActivityC() : AppCompatActivity() {
     //***DB에 하루치 모든 정보를 저장. 추후에 불러올때 다시 읽어들인다.
     private fun saveDBDay() {
         val dayDir = getExternalFilesDir(null).toString() + todayDate
-        val file = File(dayDir)
-        if(!file.exists()) {
-            file.mkdirs()
+        val dayfile = File(dayDir)
+        if(!dayfile.exists()) {
+            dayfile.mkdirs()
         }
-        Log.i("하루 주소", "${file.absolutePath}")
+        Log.i("하루 주소", "${dayfile.absolutePath}")
     }
     //***
 
+    //****알람 관련 함수들
     fun setNotfTime(hour: Int, min:Int){
         if(hour < 0 || min < 0) {
             val cal = Calendar.getInstance()
@@ -395,37 +447,6 @@ class MainActivityC() : AppCompatActivity() {
         //toast 메시지 출력
         Toast.makeText(this, "알람이 취소되었습니다.", Toast.LENGTH_SHORT).show()
     }
-
-    //**미완 - 푸시알림을 띄워주는
-    //정해진 시간에 보내기??
-//    fun makeNotification(){
-//        val id = "MyChannel"
-//        val name = "TimeCheckChannel"
-//        val notificationChannel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH)
-//        notificationChannel.enableVibration(true)
-//        notificationChannel.enableLights(true)
-//        notificationChannel.lightColor = Color.GREEN
-//        notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
-//
-//        val builder = NotificationCompat.Builder(this, id)
-//            .setSmallIcon(R.drawable.ic_baseline_access_alarm_24)
-//            .setContentTitle("일정 알람")
-//            .setContentText(mymemo)
-//            .setAutoCancel(true)
-//
-//        val intent = Intent(this, MainActivityC::class.java)
-//        intent.putExtra("time", mymemo)
-//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-//
-//        val pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-//        builder.setContentIntent(pendingIntent)
-//
-//        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        manager.createNotificationChannel(notificationChannel)
-//        val notification = builder.build()
-//        manager.notify(10, notification)
-//    }
-    //**
-
+    //****알람 관련 함수들
 
 }
