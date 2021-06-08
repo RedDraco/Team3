@@ -33,9 +33,9 @@ class MainActivityC() : AppCompatActivity() {
     lateinit var iconBinding:IcondlgBinding
     lateinit var iconAdapter: IconAdapter
 
-    //*알람 변수
-    var Alarm_Hour = -1
-    var Alarm_Min = -1
+    //*아이콘 관련 변수
+    var resourceId = 0
+    var icon_flag = 0
     //*
 
     //
@@ -56,6 +56,8 @@ class MainActivityC() : AppCompatActivity() {
     var dayPngDir = ""
 
     //**알람 관련 변수들
+    var Alarm_Hour = -1
+    var Alarm_Min = -1
     var myampm = ""
     var myhour = ""
     var mymin = ""
@@ -65,7 +67,6 @@ class MainActivityC() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMaincBinding.inflate(layoutInflater)
-        iconBinding = IcondlgBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val i = intent
@@ -81,7 +82,7 @@ class MainActivityC() : AppCompatActivity() {
 
         initData()
         init()
-        initIconRecycler()
+
     }
 
     //**하루 디렉토리 및 txt, jpg, png 디렉토리 생성.
@@ -133,8 +134,8 @@ class MainActivityC() : AppCompatActivity() {
         iconAdapter.itemClickListener = object :IconAdapter.OnItemClickListener{
 
             override fun OnItemClick(holder: IconAdapter.ViewHolder, view: View, iconData: IconData, position: Int) {
-                val resourceId = resources.getIdentifier(iconList[position].photo, "drawable", packageName)
-                binding.ImageIcon.setImageResource(resourceId)
+                //아이콘을 클릭하면 해당 아이콘 정보만 받아온다.
+                resourceId = resources.getIdentifier(iconList[position].photo, "drawable", packageName)
             }
 
         }
@@ -149,13 +150,19 @@ class MainActivityC() : AppCompatActivity() {
 
         //****아이콘 버튼****
         binding.ImageIcon.setOnClickListener {
+            iconBinding = IcondlgBinding.inflate(layoutInflater)
+            initIconRecycler()
 
             val icondlgBuilder = AlertDialog.Builder(this)
 
             icondlgBuilder.setView(iconBinding.root)
-                .setPositiveButton("확인"){
-                        _,_->
-                    //아무것도 안한다.
+                .setPositiveButton("확인") { _, _ ->
+                    //아이콘 설정은 확인을 누르면 한다.
+                    binding.ImageIcon.setImageResource(resourceId)
+                    iconBinding
+                }
+                .setNegativeButton("취소") { _, _ ->
+
                 }
                 .show()
         }
@@ -198,8 +205,7 @@ class MainActivityC() : AppCompatActivity() {
 
         //*****알람*****
         binding.TextAlarm.setOnClickListener {
-
-            //***푸쉬알람
+            //**푸쉬알람 설정
             setNotfTime(-1, -1)
 
         }
@@ -234,9 +240,9 @@ class MainActivityC() : AppCompatActivity() {
             ADD_REQUEST->{
                 if(resultCode == Activity.RESULT_OK){
                     if(data?.hasExtra("path")!!){
-                        PATH = data?.getStringExtra("path")!!
+                        PATH = data.getStringExtra("path")!!
                         Log.i("MainActivityC", "$PATH")
-                        val file = File(PATH)
+                        //val file = File(PATH)
                         decideExtra(PATH)
                     }
                 }
@@ -372,6 +378,7 @@ class MainActivityC() : AppCompatActivity() {
 
     //****알람 관련 함수들
     fun setNotfTime(hour: Int, min:Int){
+        //전에 저장된 알람이 없으면,
         if(hour < 0 || min < 0) {
             val cal = Calendar.getInstance()
             val timeSetListener =
@@ -413,11 +420,10 @@ class MainActivityC() : AppCompatActivity() {
                 cal.get(Calendar.MINUTE), true
             ).show()
 
-        } else{
+        } else{ //스위치를 통해 알람을 끈 상태라면,
             setAlarmTime(hour, min)
         }
     }
-
 
     private fun setAlarmTime(hour:Int, minute:Int){
         Log.d("확인", hour.toString() + "시 " + minute.toString())
