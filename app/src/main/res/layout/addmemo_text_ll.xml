@@ -26,8 +26,15 @@
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="5"
+            android:layout_weight="6"
             android:text="" />
+
+        <ImageView
+            android:id="@+id/ImageFold"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/icon_fold" />
 
         <ImageView
             android:id="@+id/ImageTrash"

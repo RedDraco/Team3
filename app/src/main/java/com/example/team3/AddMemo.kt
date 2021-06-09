@@ -1,6 +1,7 @@
 package com.example.team3
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -24,14 +25,18 @@ class AddMemo : AppCompatActivity() {
     lateinit var binding:ActivityAddMemoBinding
     var memoPath:String = ""
     var flag = 0
+    var date = ""
+    var file_flag = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddMemoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val i = intent
+        val i = intent!!
         memoPath = i.getStringExtra("path")?:""
+        date = i.getStringExtra("date")?:""
+        file_flag = i.getIntExtra("fileflag", 0)
         decideFragment()
         init()
     }
@@ -72,15 +77,15 @@ class AddMemo : AppCompatActivity() {
         binding.apply {
 
             when(flag){
-                NEWMEMO -> supportFragmentManager.beginTransaction().replace(R.id.frameLayout, MemoFragment(memoPath, flag)).commit()
-                MODIFYTEXT -> supportFragmentManager.beginTransaction().replace(R.id.frameLayout, MemoFragment(memoPath, flag)).commit()
+                NEWMEMO -> supportFragmentManager.beginTransaction().replace(R.id.frameLayout, MemoFragment(memoPath, flag, date, file_flag)).commit()
+                MODIFYTEXT -> supportFragmentManager.beginTransaction().replace(R.id.frameLayout, MemoFragment(memoPath, flag, date, file_flag)).commit()
                 MODIFYPICTURE ->{
                     tabLayout.getTabAt(1)!!.select()
-                    supportFragmentManager.beginTransaction().replace(R.id.frameLayout, PictureFragment(memoPath, flag)).commit()
+                    supportFragmentManager.beginTransaction().replace(R.id.frameLayout, PictureFragment(memoPath, flag, date, file_flag)).commit()
                 }
                 MODIFYDRAWING -> {
                     tabLayout.getTabAt(2)!!.select()
-                    supportFragmentManager.beginTransaction().replace(R.id.frameLayout, DrawingFragment(memoPath, flag)).commit()
+                    supportFragmentManager.beginTransaction().replace(R.id.frameLayout, DrawingFragment(memoPath, flag, date, file_flag)).commit()
                 }
             }
 
@@ -89,9 +94,9 @@ class AddMemo : AppCompatActivity() {
                     val position = tab?.position
 
                     when(position){
-                        0 -> supportFragmentManager.beginTransaction().replace(R.id.frameLayout, MemoFragment(memoPath, flag)).commit()
-                        1 -> supportFragmentManager.beginTransaction().replace(R.id.frameLayout, PictureFragment(memoPath, flag)).commit()
-                        2 -> supportFragmentManager.beginTransaction().replace(R.id.frameLayout, DrawingFragment(memoPath, flag)).commit()
+                        0 -> supportFragmentManager.beginTransaction().replace(R.id.frameLayout, MemoFragment(memoPath, flag, date, file_flag)).commit()
+                        1 -> supportFragmentManager.beginTransaction().replace(R.id.frameLayout, PictureFragment(memoPath, flag, date, file_flag)).commit()
+                        2 -> supportFragmentManager.beginTransaction().replace(R.id.frameLayout, DrawingFragment(memoPath, flag, date, file_flag)).commit()
                     }
                 }
 

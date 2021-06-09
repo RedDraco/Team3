@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class DrawingFragment(var memoPath:String, val flag:Int) : Fragment() {
+class DrawingFragment(var memoPath:String, val flag:Int, val date:String, val file_flag:Int) : Fragment() {
 
     var binding: FragmentDrawingBinding?= null
     var currentCanvasView : CanvasView? = null
@@ -140,6 +140,7 @@ class DrawingFragment(var memoPath:String, val flag:Int) : Fragment() {
                 }
                 val resultIntent = Intent()
                 resultIntent.putExtra("path", memoPath)
+                resultIntent.putExtra("fileflag", file_flag+1)
                 requireActivity().setResult(Activity.RESULT_OK, resultIntent)
                 requireActivity().finish()
             }
@@ -164,8 +165,7 @@ class DrawingFragment(var memoPath:String, val flag:Int) : Fragment() {
     }
 
     fun createImageFile(): File {
-        val timeStamp = SimpleDateFormat("yyyyMMdd").format(Date())
-        val imageFileName = timeStamp + "_"
+        val imageFileName = date + "_" + file_flag + "_png_"
 
         val storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         //Prefix : imageFilename, Suffix : .jpg, Directory : storageDir

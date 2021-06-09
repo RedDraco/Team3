@@ -35,12 +35,12 @@ class MainActivityC() : AppCompatActivity() {
 
     //*아이콘 관련 변수
     var resourceId = 0
-    var icon_flag = 0
     //*
 
     //
     var ADD_REQUEST = 0
     var todayDate = ""
+    var file_flag = 0
     //전 액티비티에서 받아오는 날짜 정보
     var YEAR = ""
     var MONTH = ""
@@ -74,9 +74,9 @@ class MainActivityC() : AppCompatActivity() {
             YEAR = i.getStringExtra("year")?:""
             MONTH = i.getStringExtra("month")?:""
             DAY = i.getStringExtra("day")?:""
-            todayDate = "/" + YEAR + MONTH + DAY
+            todayDate = YEAR + MONTH + DAY
 
-            Log.i("MainActivityC", "$todayDate")
+            Log.i("todayDate : ", "$todayDate")
         }
         initDir()
 
@@ -87,34 +87,12 @@ class MainActivityC() : AppCompatActivity() {
 
     //**하루 디렉토리 및 txt, jpg, png 디렉토리 생성.
     private fun initDir(){
-        dayDir = getExternalFilesDir(null).toString() + todayDate
+        dayDir = getExternalFilesDir(null).toString() + "/" + todayDate
         val dayfile = File(dayDir)
         if(!dayfile.exists()) {
             dayfile.mkdirs()
             Log.i("하루 디렉토리", "생성 완료")
         }
-        Log.i("하루 주소", "${dayfile.absolutePath}")
-        dayTextDir = dayDir + "/" + "TEXT"
-        val dayTextfile = File(dayTextDir)
-        if(!dayTextfile.exists()) {
-            dayTextfile.mkdirs()
-            Log.i("TEXT 디렉토리", "생성 완료")
-        }
-        Log.i("TEXT 주소", "${dayTextfile.absolutePath}")
-        dayJpgDir = dayDir + "/" + "JPG"
-        val dayJpgfile = File(dayJpgDir)
-        if(!dayJpgfile.exists()) {
-            dayJpgfile.mkdirs()
-            Log.i("JPG 디렉토리", "생성 완료")
-        }
-        Log.i("JPG 주소", "${dayJpgfile.absolutePath}")
-        dayPngDir = dayDir + "/" + "PNG"
-        val dayPngfile = File(dayPngDir)
-        if(!dayPngfile.exists()) {
-            dayPngfile.mkdirs()
-            Log.i("PNG 디렉토리", "생성 완료")
-        }
-        Log.i("PNG 주소", "${dayPngfile.absolutePath}")
     }
     //**
 
@@ -198,7 +176,8 @@ class MainActivityC() : AppCompatActivity() {
         binding.Plusbtn.setOnClickListener {
             //여기다가 하루 추가 액티비티 연결.
             val intent = Intent(this, AddMemo::class.java)
-            //intent.putExtra("date", "/Today_date")
+            intent.putExtra("date", todayDate)
+            intent.putExtra("fileflag", file_flag)
             startActivityForResult(intent, ADD_REQUEST)
         }
         //*****추가버튼*****
@@ -241,6 +220,7 @@ class MainActivityC() : AppCompatActivity() {
                 if(resultCode == Activity.RESULT_OK){
                     if(data?.hasExtra("path")!!){
                         PATH = data.getStringExtra("path")!!
+                        file_flag = data.getIntExtra("fileflag", file_flag)
                         Log.i("MainActivityC", "$PATH")
                         //val file = File(PATH)
                         decideExtra(PATH)
@@ -261,28 +241,14 @@ class MainActivityC() : AppCompatActivity() {
 
             //*확장자에 따라 FrameLayout에 동적으로 메모 추가.
             when(extension){
-                "txt" -> makeTextMemo(PATH)
-                "jpg" -> makePictureMemo(PATH)
-                "png" -> makeDrawingMemo(PATH)
+                "txt" -> setDynamicLL(binding.llDynamic, PATH, 1)
+                "jpg" -> setDynamicLL(binding.llDynamic, PATH, 2)
+                "png" -> setDynamicLL(binding.llDynamic, PATH, 3)
                 else ->  return
             }
         }
     }
     //****
-
-    //****동적 메모 할당
-    private fun makeDrawingMemo(PATH: String) {
-        setDynamicLL(binding.llDynamic, PATH, 3)
-    }
-
-    private fun makePictureMemo(PATH: String) {
-        setDynamicLL(binding.llDynamic, PATH, 2)
-    }
-
-    private fun makeTextMemo(PATH: String) {
-        setDynamicLL(binding.llDynamic, PATH, 1)
-    }
-    //****동적 메모 할당
 
     //***Linear 레이아웃에 동적으로 레이아웃을 추가하거나 제거.
     private fun setDynamicLL(layout : LinearLayout, filepath : String, dflag : Int){
@@ -297,7 +263,7 @@ class MainActivityC() : AppCompatActivity() {
             val text = inputStream.bufferedReader().use{ it.readText() }
 
             val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + file.name)
-            val targetPath = Paths.get(dayTextDir + "/" + file.name)
+            val targetPath = Paths.get(dayDir + "/" + file.name)
             Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
 
             val editText = containTView.findViewById<EditText>(R.id.EditDMemo)
@@ -305,7 +271,17 @@ class MainActivityC() : AppCompatActivity() {
             editText.clearFocus()
 
             containTView.findViewById<ImageView>(R.id.ImageTrash).setOnClickListener {
+                //뷰에서 remove하고 file도 삭제
                 layout.removeView(containTView)
+                File(targetPath.toString()).delete()
+            }
+            containTView.findViewById<ImageView>(R.id.ImageFold).setOnClickListener {
+                val textmemo = containTView.findViewById<EditText>(R.id.EditDMemo)
+                if(textmemo.visibility == View.VISIBLE){
+                    textmemo.visibility = View.GONE
+                } else{
+                    textmemo.visibility = View.VISIBLE
+                }
             }
         }
         else if(dflag == 2) {
@@ -316,15 +292,17 @@ class MainActivityC() : AppCompatActivity() {
             val decode = ImageDecoder.createSource(this.contentResolver, Uri.fromFile(file))
             val bitmap = ImageDecoder.decodeBitmap(decode)
 
-            val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + file.name)
-            val targetPath = Paths.get(dayJpgDir + "/" + file.name)
+            val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + "Pictures/" + file.name)
+            val targetPath = Paths.get(dayDir + "/" + file.name)
             Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
 
             val imageView = containIView.findViewById<ImageView>(R.id.ImageMemo)
             imageView.setImageBitmap(bitmap)
 
             containIView.findViewById<ImageView>(R.id.ImageTrash).setOnClickListener {
+                //뷰에서 remove하고 file도 삭제
                 layout.removeView(containIView)
+                File(targetPath.toString()).delete()
             }
             containIView.findViewById<ImageView>(R.id.ImageFold).setOnClickListener {
                 val imagememo = containIView.findViewById<ImageView>(R.id.ImageMemo)
@@ -343,15 +321,17 @@ class MainActivityC() : AppCompatActivity() {
             val decode = ImageDecoder.createSource(this.contentResolver, Uri.fromFile(file))
             val bitmap = ImageDecoder.decodeBitmap(decode)
 
-            val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + file.name)
-            val targetPath = Paths.get(dayPngDir + "/" + file.name)
+            val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + "Pictures/" + file.name)
+            val targetPath = Paths.get(dayDir + "/" + file.name)
             Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
 
             val imageView = containDView.findViewById<ImageView>(R.id.DrawingMemo)
             imageView.setImageBitmap(bitmap)
 
             containDView.findViewById<ImageView>(R.id.ImageTrash).setOnClickListener {
+                //뷰에서 remove하고 file도 삭제
                 layout.removeView(containDView)
+                File(targetPath.toString()).delete()
             }
             containDView.findViewById<ImageView>(R.id.ImageFold).setOnClickListener {
                 val imagememo = containDView.findViewById<ImageView>(R.id.DrawingMemo)
