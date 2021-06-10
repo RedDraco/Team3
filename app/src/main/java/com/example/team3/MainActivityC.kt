@@ -107,6 +107,7 @@ class MainActivityC() : AppCompatActivity() {
             val inputStream = filelist[0].inputStream()
             val datatext = inputStream.bufferedReader().use{ it.readText() }
             val splitString = datatext.split('\n')
+            //
             file_flag = splitString[0].toInt()
             if(splitString[1]=="no"){
 
@@ -115,7 +116,10 @@ class MainActivityC() : AppCompatActivity() {
                 binding.TextAlarm.setText(message)
                 binding.AlarmSwitch.isChecked = true
             }
-            setIcon(splitString[2].toInt())
+            //
+            icon_flag = splitString[2].toInt()
+            setIcon(icon_flag)
+            //
             binding.EditTitle.setText(splitString[3])
             //추가 memo의 레이아웃들도 추가.
             if(filelist.size>=2) {
