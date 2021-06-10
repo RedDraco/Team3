@@ -22,9 +22,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Team3">
         <receiver
-            android:name=".MyReceiver"
+            android:name=".ReceiverMin"
             android:enabled="true"
             android:exported="true"></receiver>
+        <receiver
+            android:name=".ReceiverLow"
+            android:enabled="true"
+            android:exported="true" />
+        <receiver
+            android:name=".ReceiverHigh"
+            android:enabled="true"
+            android:exported="true" />
+        <receiver
+            android:name=".ReceiverDefault"
+            android:enabled="true"
+            android:exported="true" />
+        <receiver
+            android:name=".MyReceiver"
+            android:enabled="true"
+            android:exported="true" />
 
         <activity android:name=".ThemeSetActivity" />
 

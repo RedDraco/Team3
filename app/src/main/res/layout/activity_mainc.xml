@@ -22,11 +22,11 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/edit_rec"
-            app:srcCompat="@drawable/icon_1" />
+            app:srcCompat="@drawable/icon_0" />
         //**
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
@@ -45,12 +45,10 @@
             android:textSize="25dp"
             android:text="날짜" />
 
-        <ImageView
-            android:id="@+id/Savebtn"
+        <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:srcCompat="@android:drawable/ic_menu_save" />
+            android:layout_weight="1"/>
 
         <ImageButton
             android:id="@+id/Plusbtn"
@@ -66,29 +64,14 @@
         android:orientation="horizontal"
         android:background="@drawable/layout_rec">
 
-        <Button
-            android:id="@+id/LeftBtn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/left_btn_1"
-            android:text="◀" />
-
         <TextView
-            android:id="@+id/tempT"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="4"
             android:text=""
+            android:backgroundTint="#DBFFFC"
+            android:backgroundTintMode="multiply"
             android:background="@drawable/edit_rec"/>
 
-        <Button
-            android:id="@+id/RightBtn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/right_btn_1"
-            android:text="▶" />
     </LinearLayout>
 
     <ScrollView
@@ -122,9 +105,11 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/edit_rec"
                     android:maxLines="1"
+                    android:singleLine="true"
                     android:padding="5dp"
                     android:imeOptions="actionDone"
                     android:focusableInTouchMode="true"
+                    android:focusable="true"
                     android:text="" />
 
             </LinearLayout>
@@ -149,12 +134,12 @@
                 <TextView
                     android:id="@+id/TextAlarm"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="5"
                     android:gravity="center"
                     android:background="@drawable/edit_round"
                     android:text="추가하기"
-                    android:textSize="20dp"
+                    android:textSize="24dp"
                     android:textStyle="bold" />
 
                 <ImageView
