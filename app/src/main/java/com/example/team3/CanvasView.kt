@@ -12,6 +12,7 @@ class CanvasView(context: Context?) : View(context) {
     companion object{
         const val ERASER:Int = 0
         const val NORMAL:Int = 1
+        const val CIRCLE:Int = 2
     }
     var myStrokeSize = 10f
     val colorList = arrayListOf<Int>()
@@ -19,7 +20,9 @@ class CanvasView(context: Context?) : View(context) {
 
     val paint = Paint()
     val arrayPath = arrayListOf<CustomPath>()
+
     var myBitmap:Bitmap? = null
+    var typeFlag:Int = NORMAL
 
     init{
         paint.color = Color.BLACK
@@ -48,10 +51,15 @@ class CanvasView(context: Context?) : View(context) {
                 if(colorNum >= colorList.size)
                     colorNum = 0
                 paint.color = colorList[colorNum]
+                typeFlag = NORMAL
             }
             ERASER->{
                 colorNum = -1
                 paint.color = Color.WHITE
+                typeFlag = ERASER
+            }
+            CIRCLE->{
+                typeFlag = CIRCLE
             }
         }
         return paint.color
@@ -88,14 +96,23 @@ class CanvasView(context: Context?) : View(context) {
                 val customPath = CustomPath(path, paint.color, paint.strokeWidth)
                 arrayPath.add(customPath)
             }
-
             MotionEvent.ACTION_MOVE -> {
-                val path = arrayPath.last().path
-                path.lineTo(event.x, event.y)
 
-                invalidate()
+                when(typeFlag){
+                    NORMAL->{
+                        val path = arrayPath.last().path
+                        path.lineTo(event.x, event.y)
+
+                        invalidate()
+                    }
+                    ERASER->{
+                        val path = arrayPath.last().path
+                        path.lineTo(event.x, event.y)
+
+                        invalidate()
+                    }
+                }
             }
-
             MotionEvent.ACTION_UP -> {
                 invalidate()
             }
