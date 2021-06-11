@@ -56,7 +56,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".ThemeSetActivity"/>
         <activity android:name="MyApplication"/>
         <activity android:name=".PwdActivity" />
         <activity android:name=".NotfSetActivity" />
