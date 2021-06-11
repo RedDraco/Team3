@@ -29,11 +29,12 @@ import java.util.*
 
 class MainActivityC() : AppCompatActivity() {
     private var alarmMgr: AlarmManager?= null
-    private lateinit var alarmIntent : PendingIntent
     var iconList = arrayListOf<IconData>()
     lateinit var binding: ActivityMaincBinding
     lateinit var iconBinding:IcondlgBinding
     lateinit var iconAdapter: IconAdapter
+    var alarmDBHelper = AlarmDBHelper(this, "alarmDB.db")
+    var temp_priority = MyApplication.prefs.getString("priority", "default")//이전 priority 값을 알아야 나중에 cancel할 때 intent 파악 가능
 
     //*아이콘 관련 변수
     var iconId = 0
@@ -59,7 +60,7 @@ class MainActivityC() : AppCompatActivity() {
     var myampm = ""
     var myhour = ""
     var mymin = ""
-    var message = "no"
+    var message = " "
     //**
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,12 +110,11 @@ class MainActivityC() : AppCompatActivity() {
             val splitString = datatext.split('\n')
             //
             file_flag = splitString[0].toInt()
-            if(splitString[1]=="no"){
+            if(splitString[1]==" "){
 
             }else {
                 message = splitString[1]
                 binding.TextAlarm.setText(message)
-                binding.AlarmSwitch.isChecked = true
             }
             //
             icon_flag = splitString[2].toInt()
@@ -126,6 +126,7 @@ class MainActivityC() : AppCompatActivity() {
                 for (i in 1 until filelist.size) {
                     val memoFilePath = filelist[i].absolutePath
                     decideExtra(memoFilePath, 0)
+                    memo_flag++
                 }
             }
         }
@@ -168,10 +169,11 @@ class MainActivityC() : AppCompatActivity() {
     }
 
     private fun init(){
+        alarmMgr = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
 
         //클릭한 날짜에 따라, 날짜 텍스트 설정
         binding.TextDate.setText(MONTH + "월 " + DAY + "일")
-
 
         //****아이콘 버튼****
         binding.ImageIcon.setOnClickListener {
@@ -209,30 +211,39 @@ class MainActivityC() : AppCompatActivity() {
         //*****추가버튼*****
 
         //*****알람*****
+        binding.apply {
+            if (alarmDBHelper.getID(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH) != -1){
+                AlarmSwitch.isChecked = true}
+            else {
+                Alarm_Hour = -1
+                Alarm_Min = -1
+                AlarmSwitch.isChecked = false
+                TextAlarm.setText("추가하기")
+            }
+        }
         binding.TextAlarm.setOnClickListener {
             //**푸쉬알람 설정
-            setNotfTime(-1, -1)
-
+            setNotfTime()
         }
         binding.ImageAlarm.setOnClickListener {
-            unSetAlarm()
+            cancelAlarm(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH)
             Alarm_Hour = -1
             Alarm_Min = -1
             binding.AlarmSwitch.isChecked = false
             binding.TextAlarm.setText("추가하기")
-            message = "no"
+            message = " "
         }
         binding.AlarmSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked == true) {
                 if (Alarm_Hour < 0 || Alarm_Min < 0) { }
                 else {
-                    setAlarmTime(Alarm_Hour, Alarm_Min)
+                    setAlarm(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Alarm_Hour, Alarm_Min)
                 }
             }
             if(isChecked == false) {
                 if (Alarm_Hour < 0 || Alarm_Min < 0) { }
                 else {
-                    unSetAlarm()
+                    cancelAlarm(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH)
                 }
             }
         }
@@ -416,80 +427,114 @@ class MainActivityC() : AppCompatActivity() {
     //***
 
     //****알람 관련 함수들
-    fun setNotfTime(hour: Int, min:Int){
-        //전에 저장된 알람이 없으면,
-        if(hour < 0 || min < 0) {
-            val cal = Calendar.getInstance()
-            val timeSetListener =
-                TimePickerDialog.OnTimeSetListener { view: TimePicker?, hourOfDay: Int, minute: Int ->
-                    cal.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                    cal.set(Calendar.MINUTE, minute)
-                    unSetAlarm()
-                    //****
-                    myhour = view!!.hour.toString()
-                    mymin = view!!.minute.toString()
-                    //오전 오후 설정
-                    if (myhour.toInt() >= 12 && myhour.toInt() <= 24) {
-                        myampm = "오후"
-                    } else {
-                        myampm = "오전"
-                    }
+    fun setNotfTime(){//timepickerdialog 띄우기 -> 선택하면 setAlarm 호출
+        val cal = Calendar.getInstance()
+        val timeSetListener = TimePickerDialog.OnTimeSetListener{
+                view: TimePicker?, hour: Int, minute: Int ->
+            cal.set(Calendar.HOUR_OF_DAY, hour)
+            cal.set(Calendar.MINUTE, minute)
+            //****
+            myhour = view!!.hour.toString()
+            mymin = view!!.minute.toString()
+            //오전 오후 설정
+            if (myhour.toInt() >= 12 && myhour.toInt() <= 24) {
+                myampm = "오후"
+            } else {
+                myampm = "오전"
+            }
 
-                    if (myhour.toInt() >= 0 && myhour.toInt() <= 9) {
-                        myhour = "0" + myhour
-                    } else { }
+            if (myhour.toInt() >= 0 && myhour.toInt() <= 9)
+                myhour = "0" + myhour
 
-                    if (mymin.toInt() >= 0 && mymin.toInt() <= 9) {
-                        mymin = "0" + mymin
-                    } else { }
-                    //알람 옆에 텍스트 설정
-                    message = myampm + " " + myhour + " : " + mymin
-                    binding.TextAlarm.setText(message)
-                    //스위치 온
-                    binding.AlarmSwitch.isChecked = true
-                    //****
-                    Alarm_Hour = hourOfDay
-                    Alarm_Min = minute
-                    setAlarmTime(Alarm_Hour, Alarm_Min)
-                }
-
-            TimePickerDialog(
-                this, timeSetListener,
-                cal.get(Calendar.HOUR_OF_DAY),
-                cal.get(Calendar.MINUTE), true
-            ).show()
-
-        } else{ //스위치를 통해 알람을 끈 상태라면,
-            setAlarmTime(hour, min)
+            if (mymin.toInt() >= 0 && mymin.toInt() <= 9)
+                mymin = "0" + mymin
+            //알람 옆에 텍스트 설정
+            message = myampm + " " + myhour + " : " + mymin
+            binding.TextAlarm.setText(message)
+            //스위치 온
+            binding.AlarmSwitch.isChecked = true
+            //****
+            Alarm_Hour = view!!.hour
+            Alarm_Min = view!!.minute
+            setAlarm(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, hour, minute)
         }
+        TimePickerDialog(this, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
     }
 
-    private fun setAlarmTime(hour:Int, minute:Int){
-        Log.i("확인", hour.toString() + "시 " + minute.toString())
-        val calender: Calendar = Calendar.getInstance().apply {
+    fun setAlarm(year: Int, month:Int, day: Int, hour: Int, minute: Int){
+        lateinit var alarmIntent : PendingIntent
+        var cnt = MyApplication.prefs.getInt("cnt",0)
+
+        when (MyApplication.prefs.getString("priority", "default")){
+            "high"->{
+                alarmIntent = Intent(applicationContext, ReceiverHigh::class.java).let{
+                        intent->
+                    PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
+                }
+                Log.d("확인", "high, cnt: ${cnt}")
+            }
+            "default"->{
+                alarmIntent = Intent(applicationContext, ReceiverDefault::class.java).let{
+                        intent->
+                    PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
+                }
+                Log.d("확인", "default, cnt: ${cnt}")
+            }
+            "low"->{
+                alarmIntent = Intent(applicationContext, ReceiverLow::class.java).let{
+                        intent->
+                    PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
+                }
+                Log.d("확인", "low, cnt: ${cnt}")
+            }
+            "min"->{
+                alarmIntent = Intent(applicationContext, ReceiverMin::class.java).let{
+                        intent->
+                    PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
+                }
+                Log.d("확인", "min, cnt: ${cnt}")
+            }
+        }
+
+        val calendar: Calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
             set(Calendar.HOUR_OF_DAY, hour)
             set(Calendar.MINUTE, minute)
         }
 
-        alarmMgr = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmIntent = Intent(this, MyReceiver::class.java).let{
-                intent-> PendingIntent.getBroadcast(this, 0, intent, 0)
+        alarmMgr?.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, alarmIntent)
+        Log.d("확인", "${hour}시 ${minute}에 알람 설정함")
+        val alarmData = MyAlarmData(cnt,"${hour}시 ${minute}분", year, month, day, hour, minute)
+        Log.d("확인","삽입: ${alarmData.id}/${alarmData.content}/${alarmData.year}/${alarmData.month}/${alarmData.day}/${alarmData.hour}/${alarmData.minute}")
+        alarmDBHelper.insertAlarm(alarmData)
+        val allAlarms = alarmDBHelper.getAllRecord()
+        for (i in allAlarms.indices){
+            Log.d("확인", "확인: ${allAlarms[i].id}/${allAlarms[i].content}/${allAlarms[i].year}/${allAlarms[i].month}/${allAlarms[i].day}/${allAlarms[i].hour}/${allAlarms[i].minute}")
         }
-
-        alarmMgr?.setInexactRepeating(//반복//반복할 필요 없으면 제거
-            AlarmManager.RTC_WAKEUP,
-            calender.timeInMillis,
-            AlarmManager.INTERVAL_DAY,
-            alarmIntent
-        )
-        //toast 메시지 출력
+        MyApplication.prefs.setInt("cnt",cnt+1)
         Toast.makeText(this, "알람이 설정되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
-    fun unSetAlarm() {
-        alarmMgr?.cancel(alarmIntent)
-        //toast 메시지 출력
+    fun cancelAlarm(year:Int, month:Int, day:Int){//알람 취소
+        lateinit var intent: Intent
+        when (temp_priority){
+            "high"-> intent = Intent(applicationContext, ReceiverHigh::class.java)
+            "default"-> intent = Intent(applicationContext, ReceiverDefault::class.java)
+            "low" -> intent = Intent(applicationContext, ReceiverLow::class.java)
+            "min" -> intent = Intent(applicationContext, ReceiverMin::class.java)
+        }
+        val alarmId = alarmDBHelper.getID(year, month, day)
+        if (alarmId > -1){
+            val alarmIntent = PendingIntent.getBroadcast(applicationContext, alarmId, intent, PendingIntent.FLAG_NO_CREATE)
+            if (alarmIntent != null) {
+                alarmMgr?.cancel(alarmIntent)
+                alarmDBHelper.deleteAlarm(alarmId)
+            }
+        }
+        val allAlarms = alarmDBHelper.getAllRecord()
+        for (i in allAlarms.indices){
+            Log.d("확인", "확인: ${allAlarms[i].id}/${allAlarms[i].content}/${allAlarms[i].year}/${allAlarms[i].month}/${allAlarms[i].day}/${allAlarms[i].hour}/${allAlarms[i].minute}")
+        }
         Toast.makeText(this, "알람이 취소되었습니다.", Toast.LENGTH_SHORT).show()
     }
     //****알람 관련 함수들

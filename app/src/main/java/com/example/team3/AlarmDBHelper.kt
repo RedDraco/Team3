@@ -106,7 +106,9 @@ class AlarmDBHelper(val context: Context?, val DB_NAME: String) : SQLiteOpenHelp
         val cursor = db.rawQuery(strsql, null)
         cursor.moveToFirst()
         var id = -1
-        id = cursor.getString(0).toInt()
+        if (cursor.count!=0){
+            id = cursor.getString(0).toInt()
+        }
         Log.d("확인", "id: ${id}")
         cursor.close()
         db.close()
