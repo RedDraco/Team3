@@ -11,10 +11,12 @@ import com.example.team3.databinding.ActivityShowAllBinding
 import java.io.File
 import java.time.Year
 import java.util.*
+import java.util.Arrays.sort
+import java.util.Collections.sort
 import kotlin.collections.ArrayList
 
 class ShowAllActivity : AppCompatActivity() {
-    var memoData: ArrayList<memoData> = ArrayList()
+    var memoData: ArrayList<MemoData> = ArrayList()
     var dayList = mutableListOf("01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
         "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
         "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31")
@@ -23,7 +25,6 @@ class ShowAllActivity : AppCompatActivity() {
     lateinit var adapter: MemoAdapter
     lateinit var year: String
     lateinit var month: String
-    private val filepath = "/storage/emulated/0/Android/data/com.example.team3/files/"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityShowAllBinding.inflate(layoutInflater)
@@ -35,23 +36,26 @@ class ShowAllActivity : AppCompatActivity() {
 
     private fun initData() {
         for(i in dayList) {
-            var date = year + month + i
-            Log.i("date", date)
-            var temp = filepath + date
-            var path = Environment.getExternalStorageDirectory().getAbsolutePath() + temp;
+            var date = "/$year$month$i"
+            var path = getExternalFilesDir(null).toString() + date
             var directory: File = File(path)
             if(!directory.exists()) continue
-
+            Log.i("directory", directory.toString())
             var files = directory.listFiles()
-            var filesNameList: ArrayList<String> = ArrayList()
-            for (i in filesNameList) {
-                if (i.lastIndexOf(".").equals("txt")) {
-                    val scan = Scanner(openFileInput(i))
-                    val sentence = scan.nextLine()
-                    memoData.add(memoData(sentence))
-                    scan.close()
+            Arrays.sort(files)
+            for (i in files) {
+                Log.i("filename", i.toString())
+                if(i.toString().contains("_data_")) continue
+                if (i.toString().contains(".txt")) {
+                    val inputStream = i.inputStream()
+                    val dataText = inputStream.bufferedReader().use { it.readText() }
+                    val sentence = dataText.split('\n')
+                    val firstSentence = sentence[0]
+                    Log.i("sentence", firstSentence)
+                    memoData.add(MemoData(firstSentence))
                 }
             }
+            Log.i("memo", memoData.size.toString())
         }
 
 

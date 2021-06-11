@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class MemoAdapter (val memoList: ArrayList<memoData>) : RecyclerView.Adapter<MemoAdapter.ViewHolder>(){
+class MemoAdapter (val memoList: ArrayList<MemoData>) : RecyclerView.Adapter<MemoAdapter.ViewHolder>(){
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val memoView: TextView = itemView.findViewById(R.id.memo_item)
     }
