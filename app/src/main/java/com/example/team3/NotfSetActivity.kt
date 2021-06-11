@@ -1,14 +1,23 @@
 package com.example.team3
 
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.example.team3.databinding.ActivityNotfSetBinding
+import java.util.*
 
 class NotfSetActivity : AppCompatActivity() {
+    var temp_priority = MyApplication.prefs.getString("priority", "default")
+    var alarmDBHelper = AlarmDBHelper(this, "alarmDB.db")
     lateinit var binding: ActivityNotfSetBinding
+    lateinit var alarmMgr: AlarmManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,27 +39,118 @@ class NotfSetActivity : AppCompatActivity() {
     }
 
     private fun init() {
+        alarmMgr = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         binding.apply {
+            when (MyApplication.prefs.getString("priority", "default")){
+                "high"-> rbHigh.isChecked = true
+                "default"-> rbDefault.isChecked = true
+                "low"-> rbLow.isChecked = true
+                "min"-> rbMin.isChecked = true
+            }
+
             rbPriority.setOnCheckedChangeListener { group, checkedId ->
+                temp_priority = MyApplication.prefs.getString("priority", "default")
                 when (checkedId){
                     R.id.rb_min->{
-                        //NotificationManager에서는 1, NotificationCompat에서는 -2
-                        MyApplication.prefs.setString("priority", "1")
+                        MyApplication.prefs.setString("priority", "min")
+                        changePriority()
                     }
                     R.id.rb_low->{
-                        //NotificationManager에서는 2, NotificationCompat에서는 -1
-                        MyApplication.prefs.setString("priority", "2")
+                        MyApplication.prefs.setString("priority", "low")
+                        changePriority()
                     }
                     R.id.rb_default->{
-                        //NotificationManager에서는 3, NotificationCompat에서는 0
-                        MyApplication.prefs.setString("priority", "3")
+                        MyApplication.prefs.setString("priority", "default")
+                        changePriority()
                     }
                     R.id.rb_high->{
-                        //NotificationManager에서는 4, NotificationCompat에서는 1
-                        MyApplication.prefs.setString("priority", "4")
+                        MyApplication.prefs.setString("priority", "high")
+                        changePriority()
                     }
                 }
             }
         }
+    }
+
+    fun changePriority() {//priority 설정 값 바뀔 때 이전에 등록되었던 alarm 취소하고 재등록
+        lateinit var intent: Intent
+        when (temp_priority){
+            "high"-> intent = Intent(applicationContext, ReceiverHigh::class.java)
+            "default"-> intent = Intent(applicationContext, ReceiverDefault::class.java)
+            "low" -> intent = Intent(applicationContext, ReceiverLow::class.java)
+            "min" -> intent = Intent(applicationContext, ReceiverMin::class.java)
+        }
+        Log.d("확인", "changePriority() 진입")
+        if (alarmDBHelper.getRowCount()>0){
+            //cancel all alarms
+            val allAlarms = alarmDBHelper.getAllRecord()
+            for (i in allAlarms.indices){
+                Log.d("확인", "확인: ${allAlarms[i].id}/${allAlarms[i].content}/${allAlarms[i].year}/${allAlarms[i].month}/${allAlarms[i].day}/${allAlarms[i].hour}/${allAlarms[i].minute}")
+            }
+            for (i in allAlarms.indices){
+                val alarmIntent = PendingIntent.getBroadcast(applicationContext, allAlarms[i].id, intent, PendingIntent.FLAG_NO_CREATE)
+                if (alarmIntent != null){
+                    alarmMgr?.cancel(alarmIntent)
+                    alarmDBHelper.deleteAlarm(allAlarms[i].id)
+                }else Log.d("확인","null")
+            }
+            //set alarms again
+            for (i in allAlarms.indices){
+                setAlarm(allAlarms[i].year, allAlarms[i].month, allAlarms[i].day, allAlarms[i].hour, allAlarms[i].minute)
+            }
+        }
+    }
+
+    fun setAlarm(year: Int, month:Int, day: Int, hour: Int, minute: Int){
+        lateinit var alarmIntent : PendingIntent
+        var cnt = MyApplication.prefs.getInt("cnt",0)
+
+        when (MyApplication.prefs.getString("priority", "default")){
+            "high"->{
+                alarmIntent = Intent(applicationContext, ReceiverHigh::class.java).let{
+                        intent->
+                    PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
+                }
+                Log.d("확인", "high, cnt: ${cnt}")
+            }
+            "default"->{
+                alarmIntent = Intent(applicationContext, ReceiverDefault::class.java).let{
+                        intent->
+                    PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
+                }
+                Log.d("확인", "default, cnt: ${cnt}")
+            }
+            "low"->{
+                alarmIntent = Intent(applicationContext, ReceiverLow::class.java).let{
+                        intent->
+                    PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
+                }
+                Log.d("확인", "low, cnt: ${cnt}")
+            }
+            "min"->{
+                alarmIntent = Intent(applicationContext, ReceiverMin::class.java).let{
+                        intent->
+                    PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
+                }
+                Log.d("확인", "min, cnt: ${cnt}")
+            }
+        }
+
+        val calendar: Calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+        }
+
+        alarmMgr?.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, alarmIntent)
+        Log.d("확인", "${hour}시 ${minute}에 알람 설정함")
+        val alarmData = MyAlarmData(cnt,"${hour}시 ${minute}분", year, month, day, hour, minute)
+        Log.d("확인","삽입: ${alarmData.id}/${alarmData.content}/${alarmData.year}/${alarmData.month}/${alarmData.day}/${alarmData.hour}/${alarmData.minute}")
+        alarmDBHelper.insertAlarm(alarmData)
+        val allAlarms = alarmDBHelper.getAllRecord()
+        for (i in allAlarms.indices){
+            Log.d("확인", "확인: ${allAlarms[i].id}/${allAlarms[i].content}/${allAlarms[i].year}/${allAlarms[i].month}/${allAlarms[i].day}/${allAlarms[i].hour}/${allAlarms[i].minute}")
+        }
+        MyApplication.prefs.setInt("cnt", cnt+1)
     }
 }
