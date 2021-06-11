@@ -33,6 +33,19 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <receiver
+            android:name=".ReceiverDefault"
+            android:enabled="true" />
+        <receiver
+            android:name=".ReceiverHigh"
+            android:enabled="true" />
+        <receiver
+            android:name=".ReceiverLow"
+            android:enabled="true" />
+        <receiver
+            android:name=".ReceiverMin"
+            android:enabled="true" />
+
         <activity android:name=".ThemeSetActivity"/>
         <activity android:name="MyApplication"/>
         <activity android:name=".PwdActivity" />
