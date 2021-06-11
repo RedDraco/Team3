@@ -11,6 +11,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
     <application
         android:name=".MyApplication"
@@ -54,7 +55,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".MyApplication" />
+        <activity android:name="MyApplication"/>
         <activity android:name=".PwdActivity" />
         <activity android:name=".NotfSetActivity" />
         <activity android:name=".LockSetActivity" />
