@@ -12,15 +12,12 @@ import androidx.core.app.NotificationManagerCompat
 import java.util.*
 
 class ReceiverMin : BroadcastReceiver() {
-    //val importanceLevel = ipt
     val CHANNEL_ID = "MIN"
     val textTitle = "Alarm"
     var textContent = "min 채널"
-    //val textContent = importanceLevel.toString()
 
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
-        //var importance = MyApplication.prefs.getString("priority", "3")
 
         var notificationManager: NotificationManager =
             context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -28,9 +25,6 @@ class ReceiverMin : BroadcastReceiver() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             val name = "Min Channel"
             val descriptionText = "testing min"
-            //val importance = MyApplication.prefs.getString("priority", "3").toInt()
-            //val importance = NotificationManager.IMPORTANCE_MIN
-            //val importance = importanceLevel
             var channel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_MIN).apply {
                 description = descriptionText
             }

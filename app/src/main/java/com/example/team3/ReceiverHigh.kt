@@ -12,15 +12,12 @@ import androidx.core.app.NotificationManagerCompat
 import java.util.*
 
 class ReceiverHigh : BroadcastReceiver() {
-    //val importanceLevel = ipt
     val CHANNEL_ID = "HIGH"
     val textTitle = "Alarm"
     var textContent = "High 채널"
-    //val textContent = importanceLevel.toString()
 
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
-        //var importance = MyApplication.prefs.getString("priority", "3")
 
         var notificationManager: NotificationManager =
             context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -49,7 +46,6 @@ class ReceiverHigh : BroadcastReceiver() {
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentText(textTitle)
             .setContentText(textContent)
-            //.setPriority(MyApplication.prefs.getString("priority", "3").toInt() - 3)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
