@@ -37,6 +37,7 @@ class MainActivityC() : AppCompatActivity() {
     var temp_priority = MyApplication.prefs.getString("priority", "default")//이전 priority 값을 알아야 나중에 cancel할 때 intent 파악 가능
 
     var tempContainView:View ?= null
+    var ismodify:Boolean = false
 
     //*아이콘 관련 변수
     var iconId = 0
@@ -204,6 +205,7 @@ class MainActivityC() : AppCompatActivity() {
 
         //*****추가버튼*****
         binding.Plusbtn.setOnClickListener {
+            ismodify = false
             //여기다가 하루 추가 액티비티 연결.
             val intent = Intent(this, AddMemo::class.java)
             intent.putExtra("date", todayDate)
@@ -264,7 +266,6 @@ class MainActivityC() : AppCompatActivity() {
                         //val file = File(PATH)
                         decideExtra(PATH, 1)
                         memo_flag++
-
                     }
                 }
             }
@@ -367,6 +368,7 @@ class MainActivityC() : AppCompatActivity() {
             }
             containIView.findViewById<ImageView>(R.id.ImageMemo).setOnClickListener {
                 tempContainView = containIView
+                ismodify = true
 
                 val intent = Intent(this, AddMemo::class.java)
                 intent.putExtra("date", todayDate)
@@ -411,6 +413,7 @@ class MainActivityC() : AppCompatActivity() {
             }
             containDView.findViewById<ImageView>(R.id.DrawingMemo).setOnClickListener {
                 tempContainView = containDView
+                ismodify = true
 
                 val intent = Intent(this, AddMemo::class.java)
                 intent.putExtra("date", todayDate)
@@ -419,17 +422,16 @@ class MainActivityC() : AppCompatActivity() {
                 startActivityForResult(intent, ADD_REQUEST)
             }
         }
-
-        if(initflag == 1 && filepath.contains("/storage/emulated/0/Android/data/com.example.team3/files/2")){
+        Log.i("filepath", "$filepath")
+        if(initflag == 1 && ismodify){
+            ismodify = false
             Log.i("delete", "delete view")
             layout.removeView(tempContainView)
             memo_flag--
             if(memo_flag==0)
                 file_flag = 1
         }
-        else{
-            tempContainView = null
-        }
+
     }
     //****
 
