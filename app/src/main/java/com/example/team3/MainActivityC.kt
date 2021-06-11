@@ -36,7 +36,7 @@ class MainActivityC() : AppCompatActivity() {
     var alarmDBHelper = AlarmDBHelper(this, "alarmDB.db")
     var temp_priority = MyApplication.prefs.getString("priority", "default")//이전 priority 값을 알아야 나중에 cancel할 때 intent 파악 가능
 
-    var modifyFlag:Boolean = false
+    var tempContainView:View ?= null
 
     //*아이콘 관련 변수
     var iconId = 0
@@ -366,11 +366,7 @@ class MainActivityC() : AppCompatActivity() {
                 }
             }
             containIView.findViewById<ImageView>(R.id.ImageMemo).setOnClickListener {
-                layout.removeView(containIView)
-                memo_flag--
-                if(memo_flag==0)
-                    file_flag = 1
-
+                tempContainView = containIView
 
                 val intent = Intent(this, AddMemo::class.java)
                 intent.putExtra("date", todayDate)
@@ -414,10 +410,7 @@ class MainActivityC() : AppCompatActivity() {
                 }
             }
             containDView.findViewById<ImageView>(R.id.DrawingMemo).setOnClickListener {
-                layout.removeView(containDView)
-                memo_flag--
-                if(memo_flag==0)
-                    file_flag = 1
+                tempContainView = containDView
 
                 val intent = Intent(this, AddMemo::class.java)
                 intent.putExtra("date", todayDate)
@@ -425,6 +418,17 @@ class MainActivityC() : AppCompatActivity() {
                 intent.putExtra("path", targetPath.toString())
                 startActivityForResult(intent, ADD_REQUEST)
             }
+        }
+
+        if(initflag == 1 && filepath.contains("/storage/emulated/0/Android/data/com.example.team3/files/2")){
+            Log.i("delete", "delete view")
+            layout.removeView(tempContainView)
+            memo_flag--
+            if(memo_flag==0)
+                file_flag = 1
+        }
+        else{
+            tempContainView = null
         }
     }
     //****
