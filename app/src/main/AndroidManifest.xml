@@ -7,11 +7,11 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
-    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
     <application
         android:name=".MyApplication"
@@ -23,28 +23,19 @@
         android:theme="@style/Theme.Team3"
         android:networkSecurityConfig="@xml/network_security_config">
         android:theme="@style/Theme.Team3">
+
         <receiver
             android:name=".ReceiverMin"
-            android:enabled="true"
-            android:exported="true"></receiver>
+            android:enabled="true"/>
         <receiver
             android:name=".ReceiverLow"
-            android:enabled="true"
-            android:exported="true" />
+            android:enabled="true" />
         <receiver
             android:name=".ReceiverHigh"
-            android:enabled="true"
-            android:exported="true" />
+            android:enabled="true" />
         <receiver
             android:name=".ReceiverDefault"
-            android:enabled="true"
-            android:exported="true" />
-        <receiver
-            android:name=".MyReceiver"
-            android:enabled="true"
-            android:exported="true" />
-
-        <activity android:name=".ThemeSetActivity" />
+            android:enabled="true" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -56,6 +47,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <activity android:name=".ThemeSetActivity" />
         <activity android:name="MyApplication"/>
         <activity android:name=".PwdActivity" />
         <activity android:name=".NotfSetActivity" />
