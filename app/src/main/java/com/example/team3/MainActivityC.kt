@@ -20,39 +20,52 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.team3.databinding.*
 import java.io.File
+import java.io.FileOutputStream
+import java.io.PrintWriter
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.util.*
 
 class MainActivityC() : AppCompatActivity() {
+    private var alarmMgr: AlarmManager?= null
     var iconList = arrayListOf<IconData>()
     lateinit var binding: ActivityMaincBinding
     lateinit var iconBinding:IcondlgBinding
     lateinit var iconAdapter: IconAdapter
+    var alarmDBHelper = AlarmDBHelper(this, "alarmDB.db")
+    var temp_priority = MyApplication.prefs.getString("priority", "default")//이전 priority 값을 알아야 나중에 cancel할 때 intent 파악 가능
 
+    //*아이콘 관련 변수
+    var iconId = 0
+    var icon_flag = 0
+    var icon_temp = 0
     //
     var ADD_REQUEST = 0
-    var todayDate = ""
+    var todayDate = "" //20210610 형태
+    var file_flag = 1 //추가한 memo의 serial# -> filelist를 sort하고, 만들어진 레이아웃 순서 기억 용도.
+    var memo_flag = 0 //추가한 memo의 갯수 -> 0이 되면 file_flag를 1로 다시 초기화 해야한다.
     //전 액티비티에서 받아오는 날짜 정보
     var YEAR = ""
     var MONTH = ""
     var DAY = ""
-    //
-    var SavePATH = ""
     //ADDMEMO에서 받아오는 파일 디렉토리
     var PATH = ""
+    //하루 디렉토리 이름.
+    var dayDir = ""
 
     //**알람 관련 변수들
-    var mymemo = ""
+    var Alarm_Hour = -1
+    var Alarm_Min = -1
     var myampm = ""
-    var myhour = 0
-    var mymin = 0
-    var message = ""
-    var alarmflag = 0
+    var myhour = ""
+    var mymin = ""
+    var message = " "
     //**
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMaincBinding.inflate(layoutInflater)
-        iconBinding = IcondlgBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val i = intent
@@ -60,23 +73,83 @@ class MainActivityC() : AppCompatActivity() {
             YEAR = i.getStringExtra("year")?:""
             MONTH = i.getStringExtra("month")?:""
             DAY = i.getStringExtra("day")?:""
-            todayDate = "/" + YEAR + MONTH + DAY
+            todayDate = YEAR + MONTH + DAY
 
-            Log.i("MainActivityC", "$todayDate")
+            Log.i("todayDate", "$todayDate")
         }
+        initDir() //하루 디렉토리 관련
+        initDay() //저장된 하루를 다시 불러오기
 
-        initData()
+        initIcon() //아이콘 데이터 관련
         init()
-        initIconRecycler()
     }
 
-    private fun initData(){
+    //**하루 디렉토리 및 txt, jpg, png 디렉토리 생성.
+    private fun initDir(){
+        dayDir = getExternalFilesDir(null).toString() + "/" + todayDate
+        val dayfile = File(dayDir)
+        //
+        if(!dayfile.exists()) {
+            dayfile.mkdirs()
+            Log.i("initDir : 하루 디렉토리 생성", "$dayDir")
+        }
+    }
+    //**
+
+    private fun initDay(){
+        val file = File(dayDir)
+        val filelist = file.listFiles()
+        Arrays.sort(filelist)
+        if(filelist.size == 0) {
+            //처음 여는 하루일때만, 기본 정보를 담는 txt파일 생성
+            initFile()
+        } else{
+            //기본 txt 파일을 \n로 구분.
+            val inputStream = filelist[0].inputStream()
+            val datatext = inputStream.bufferedReader().use{ it.readText() }
+            val splitString = datatext.split('\n')
+            //
+            file_flag = splitString[0].toInt()
+            if(splitString[1]==" "){
+
+            }else {
+                message = splitString[1]
+                binding.TextAlarm.setText(message)
+            }
+            //
+            icon_flag = splitString[2].toInt()
+            setIcon(icon_flag)
+            //
+            binding.EditTitle.setText(splitString[3])
+            //추가 memo의 레이아웃들도 추가.
+            if(filelist.size>=2) {
+                for (i in 1 until filelist.size) {
+                    val memoFilePath = filelist[i].absolutePath
+                    decideExtra(memoFilePath, 0)
+                    memo_flag++
+                }
+            }
+        }
+    }
+
+    private fun initFile(){ //파일의 기본적인 정보들을 저장하기 위한 기본 txt파일
+        val FileName = todayDate + "_0_data_"
+        val storageDir = this.getExternalFilesDir(null)
+        //Prefix : imageFilename, Suffix : .jpg, Directory : storageDir
+        val initfile = File.createTempFile(FileName, ".txt", storageDir)
+        val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + initfile.name)
+        val targetPath = Paths.get(dayDir + "/" + initfile.name)
+        Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
+        Log.i("initFile : 하루 기본 파일 생성", "${File(targetPath.toString()).name}")
+    }
+
+    private fun initIcon(){
+        iconList.add(IconData("icon_0"))
         iconList.add(IconData("icon_1"))
         iconList.add(IconData("icon_2"))
         iconList.add(IconData("icon_3"))
         iconList.add(IconData("icon_4"))
         iconList.add(IconData("icon_5"))
-        iconList.add(IconData("icon_6"))
     }
 
     private fun initIconRecycler(){
@@ -86,8 +159,9 @@ class MainActivityC() : AppCompatActivity() {
         iconAdapter.itemClickListener = object :IconAdapter.OnItemClickListener{
 
             override fun OnItemClick(holder: IconAdapter.ViewHolder, view: View, iconData: IconData, position: Int) {
-                val resourceId = resources.getIdentifier(iconList[position].photo, "drawable", packageName)
-                binding.ImageIcon.setImageResource(resourceId)
+                //아이콘을 클릭하면 해당 아이콘 정보만 받아온다.
+                iconId = resources.getIdentifier(iconList[position].photo, "drawable", packageName)
+                icon_temp = position
             }
 
         }
@@ -95,30 +169,29 @@ class MainActivityC() : AppCompatActivity() {
     }
 
     private fun init(){
+        alarmMgr = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
 
         //클릭한 날짜에 따라, 날짜 텍스트 설정
         binding.TextDate.setText(MONTH + "월 " + DAY + "일")
 
-
         //****아이콘 버튼****
         binding.ImageIcon.setOnClickListener {
+            iconBinding = IcondlgBinding.inflate(layoutInflater)
+            initIconRecycler()
 
             val icondlgBuilder = AlertDialog.Builder(this)
 
             icondlgBuilder.setView(iconBinding.root)
-                .setPositiveButton("확인"){
-                        _,_->
-                    //아무것도 안한다.
+                .setPositiveButton("확인") { _, _ ->
+                    //아이콘 설정은 확인을 누르면 한다.
+                    binding.ImageIcon.setImageResource(iconId)
+                    icon_flag = icon_temp
                 }
+                .setNegativeButton("취소") { _, _ -> }
                 .show()
         }
         //****아이콘 버튼****
-
-        //****저장 버튼****
-        binding.Savebtn.setOnClickListener {
-            saveDBDay()
-        }
-        //****저장 버튼****
 
         //****날짜 버튼**** -> 뒤로가기 기능.
         binding.TextDate.setOnClickListener {
@@ -127,112 +200,77 @@ class MainActivityC() : AppCompatActivity() {
         }
         //****날짜 버튼****
 
-        //*****왼쪽, 오른쪽 버튼******
-        //전날, 다음날로 각각 넘겨진다.
-        binding.apply {
-            LeftBtn.setOnClickListener {
-
-            }
-            RightBtn.setOnClickListener {
-
-            }
-        }
-        //*****왼쪽, 오른쪽 버튼******
-
-
         //*****추가버튼*****
         binding.Plusbtn.setOnClickListener {
             //여기다가 하루 추가 액티비티 연결.
             val intent = Intent(this, AddMemo::class.java)
-            //intent.putExtra("date", "/Today_date")
+            intent.putExtra("date", todayDate)
+            intent.putExtra("fileflag", file_flag)
             startActivityForResult(intent, ADD_REQUEST)
         }
         //*****추가버튼*****
 
         //*****알람*****
-        if(alarmflag == 0){
-            binding.TextAlarm.setText("추가하기")
+        binding.apply {
+            if (alarmDBHelper.getID(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH) != -1){
+                AlarmSwitch.isChecked = true}
+            else {
+                Alarm_Hour = -1
+                Alarm_Min = -1
+                AlarmSwitch.isChecked = false
+                TextAlarm.setText("추가하기")
+            }
         }
         binding.TextAlarm.setOnClickListener {
-            val dlgBinding = MypickerdlgBinding.inflate(layoutInflater)
-            val dlgBuilder = AlertDialog.Builder(this)
-            dlgBuilder.setView(dlgBinding.root)
-                //알람 추가 - **미완
-                .setPositiveButton("추가"){
-                        _,_->
-                    alarmflag = 1
-                    mymemo = dlgBinding.EditAlarm.text.toString()
-                    myhour = dlgBinding.timePicker.hour
-                    //오전 오후 설정
-                    if(myhour>=12 && myhour <= 24){
-                        myampm = "오후"
-                    }
-                    else{
-                        myampm = "오전"
-                    }
-                    mymin = dlgBinding.timePicker.minute
-                    mymemo = dlgBinding.EditAlarm.text.toString()
-                    //알람 옆에 텍스트 설정
-                    message = myampm + " " + myhour.toString() + " : " + mymin.toString()
-                    binding.TextAlarm.setText(message)
-                    //스위치 온
-                    binding.AlarmSwitch.isChecked = true
-
-                    //***푸쉬알람
-                    val timerTask = object : TimerTask() {
-                        override fun run() {
-                            makeNotification()
-                        }
-                    }
-                    val timer = Timer()
-                    timer.schedule(timerTask, 2000)
-                    //*** -> 정해진 시간에 오는 알람으로 대체해야함.
-
-                    //toast 메시지 출력
-                    Toast.makeText(this, "알람이 설정되었습니다.", Toast.LENGTH_SHORT).show()
+            //**푸쉬알람 설정
+            setNotfTime()
+        }
+        binding.ImageAlarm.setOnClickListener {
+            cancelAlarm(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH)
+            Alarm_Hour = -1
+            Alarm_Min = -1
+            binding.AlarmSwitch.isChecked = false
+            binding.TextAlarm.setText("추가하기")
+            message = " "
+        }
+        binding.AlarmSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked == true) {
+                if (Alarm_Hour < 0 || Alarm_Min < 0) { }
+                else {
+                    setAlarm(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Alarm_Hour, Alarm_Min)
                 }
-                //알람 취소 버튼
-                .setNegativeButton("취소"){
-                        _,_->
-                    //아무것도 안한다.
+            }
+            if(isChecked == false) {
+                if (Alarm_Hour < 0 || Alarm_Min < 0) { }
+                else {
+                    cancelAlarm(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH)
                 }
-                //알람 삭제
-                .setNeutralButton("삭제"){
-                        _,_->
-                    binding.TextAlarm.setText("추가하기")
-                    //알람이 삭제되면 스위치도 off
-                    binding.AlarmSwitch.isChecked = false
-
-                    Toast.makeText(this, "알람이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-                }
-                .show()
+            }
         }
         //*****알람*****
     }
 
-    //액티비티를 돌려받음과 함께 Request정보도 같이 받음
+    //**액티비티를 돌려받음과 함께 Request정보도 같이 받음
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when(requestCode){
             ADD_REQUEST->{
                 if(resultCode == Activity.RESULT_OK){
                     if(data?.hasExtra("path")!!){
-                        PATH = data?.getStringExtra("path")!!
-                        Log.i("MainActivityC", "$PATH")
-                        val file = File(PATH)
-                        decideExtra(PATH)
-                        //사용한 file은 더 이상 이용하지 않는다. (?)
-                        //계속 저장하다보면 메모리 낭비!!
-                        file.delete()
+                        PATH = data.getStringExtra("path")!!
+                        file_flag = data.getIntExtra("fileflag", file_flag)
+                        //val file = File(PATH)
+                        decideExtra(PATH, 1)
+                        memo_flag++
                     }
                 }
             }
         }
     }
-    //
+    //**
 
-    //****AddMemo 액비티티에서 전달받은 memoPath의 확장자 확인
-    private fun decideExtra(PATH : String) {
+    //****AddMemo 액티비티에서 전달받은 memoPath의 확장자 확인
+    private fun decideExtra(PATH : String, initflag: Int) {
         if(PATH == "")
             return
         else{
@@ -241,34 +279,20 @@ class MainActivityC() : AppCompatActivity() {
 
             //*확장자에 따라 FrameLayout에 동적으로 메모 추가.
             when(extension){
-                "txt" -> makeTextMemo(PATH)
-                "jpg" -> makePictureMemo(PATH)
-                "png" -> makeDrawingMemo(PATH)
+                "txt" -> setDynamicLL(binding.llDynamic, PATH, 1, initflag)
+                "jpg" -> setDynamicLL(binding.llDynamic, PATH, 2, initflag)
+                "png" -> setDynamicLL(binding.llDynamic, PATH, 3, initflag)
                 else ->  return
             }
         }
     }
     //****
 
-    //****동적 메모 할당
-    private fun makeDrawingMemo(PATH: String) {
-        setDynamicLL(binding.llDynamic, PATH, 3)
-    }
-
-    private fun makePictureMemo(PATH: String) {
-        setDynamicLL(binding.llDynamic, PATH, 2)
-    }
-
-    private fun makeTextMemo(PATH: String) {
-        setDynamicLL(binding.llDynamic, PATH, 1)
-    }
-    //****동적 메모 할당
-
     //***Linear 레이아웃에 동적으로 레이아웃을 추가하거나 제거.
-    private fun setDynamicLL(layout : LinearLayout, filepath : String, dflag : Int){
+    private fun setDynamicLL(layout : LinearLayout, filepath : String, dflag : Int, initflag : Int){
         val layoutInflater = this.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
-        if(dflag == 1) {
+        if(dflag == 1) { //Text
             val containTView = layoutInflater.inflate(R.layout.addmemo_text_ll, null)
             layout.addView(containTView)
 
@@ -276,12 +300,32 @@ class MainActivityC() : AppCompatActivity() {
             val inputStream = file.inputStream()
             val text = inputStream.bufferedReader().use{ it.readText() }
 
+            val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + file.name)
+            val targetPath = Paths.get(dayDir + "/" + file.name)
+            if(initflag==1) {
+                Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
+                Log.i("setDynamicll", "${File(targetPath.toString()).absolutePath}")
+            }
+
             val editText = containTView.findViewById<EditText>(R.id.EditDMemo)
             editText.setText(text)
             editText.clearFocus()
 
             containTView.findViewById<ImageView>(R.id.ImageTrash).setOnClickListener {
+                //뷰에서 remove하고 file도 삭제
                 layout.removeView(containTView)
+                File(targetPath.toString()).delete()
+                memo_flag--
+                if(memo_flag==0)
+                    file_flag = 1
+            }
+            containTView.findViewById<ImageView>(R.id.ImageFold).setOnClickListener {
+                val textmemo = containTView.findViewById<EditText>(R.id.EditDMemo)
+                if(textmemo.visibility == View.VISIBLE){
+                    textmemo.visibility = View.GONE
+                } else{
+                    textmemo.visibility = View.VISIBLE
+                }
             }
         }
         else if(dflag == 2) {
@@ -292,11 +336,23 @@ class MainActivityC() : AppCompatActivity() {
             val decode = ImageDecoder.createSource(this.contentResolver, Uri.fromFile(file))
             val bitmap = ImageDecoder.decodeBitmap(decode)
 
+            val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + "Pictures/" + file.name)
+            val targetPath = Paths.get(dayDir + "/" + file.name)
+            if(initflag==1) {
+                Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
+                Log.i("setDynamicll", "${File(targetPath.toString()).absolutePath}")
+            }
+
             val imageView = containIView.findViewById<ImageView>(R.id.ImageMemo)
             imageView.setImageBitmap(bitmap)
 
             containIView.findViewById<ImageView>(R.id.ImageTrash).setOnClickListener {
+                //뷰에서 remove하고 file도 삭제
                 layout.removeView(containIView)
+                File(targetPath.toString()).delete()
+                memo_flag--
+                if(memo_flag==0)
+                    file_flag = 1
             }
             containIView.findViewById<ImageView>(R.id.ImageFold).setOnClickListener {
                 val imagememo = containIView.findViewById<ImageView>(R.id.ImageMemo)
@@ -315,11 +371,23 @@ class MainActivityC() : AppCompatActivity() {
             val decode = ImageDecoder.createSource(this.contentResolver, Uri.fromFile(file))
             val bitmap = ImageDecoder.decodeBitmap(decode)
 
+            val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + "Pictures/" + file.name)
+            val targetPath = Paths.get(dayDir + "/" + file.name)
+            if(initflag==1) {
+                Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
+                Log.i("setDynamicll", "${File(targetPath.toString()).absolutePath}")
+            }
+
             val imageView = containDView.findViewById<ImageView>(R.id.DrawingMemo)
             imageView.setImageBitmap(bitmap)
 
             containDView.findViewById<ImageView>(R.id.ImageTrash).setOnClickListener {
+                //뷰에서 remove하고 file도 삭제
                 layout.removeView(containDView)
+                File(targetPath.toString()).delete()
+                memo_flag--
+                if(memo_flag==0)
+                    file_flag = 1
             }
             containDView.findViewById<ImageView>(R.id.ImageFold).setOnClickListener {
                 val imagememo = containDView.findViewById<ImageView>(R.id.DrawingMemo)
@@ -335,45 +403,174 @@ class MainActivityC() : AppCompatActivity() {
 
     //***DB에 하루치 모든 정보를 저장. 추후에 불러올때 다시 읽어들인다.
     private fun saveDBDay() {
-        val dayDir = getExternalFilesDir(null).toString() + todayDate
-        val file = File(dayDir)
-        if(!file.exists()) {
-            file.mkdirs()
-        }
-        Log.i("하루 주소", "${file.absolutePath}")
+        val file1 = File(dayDir)
+        val filelist1 = file1.listFiles()
+        Arrays.sort(filelist1)
+        filelist1[0].delete()
+        initFile()
+
+        val file2 = File(dayDir)
+        val filelist2 = file2.listFiles()
+        Arrays.sort(filelist2)
+
+        val fout = FileOutputStream(filelist2[0]!!)
+        val writer = PrintWriter(fout)
+        //쓰기 시작.
+        writer.println(file_flag.toString()) //추가 memo 순서 기억 용도 -> Int로 변환 후 사용
+        writer.println(message) //알람은 유지되지만, 알람 text를 설정하기 위한 용도.
+        writer.println(icon_flag.toString()) //icon 기억 용도 -> Int로 변환 후 사용
+        writer.println(binding.EditTitle.text.toString()) //EditTitle 불러오기 위한 용도.
+
+        writer.close()
+        fout.close()
     }
     //***
 
-    //**미완 - 푸시알림을 띄워주는
-    //정해진 시간에 보내기??
-    fun makeNotification(){
-        val id = "MyChannel"
-        val name = "TimeCheckChannel"
-        val notificationChannel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH)
-        notificationChannel.enableVibration(true)
-        notificationChannel.enableLights(true)
-        notificationChannel.lightColor = Color.GREEN
-        notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+    //****알람 관련 함수들
+    fun setNotfTime(){//timepickerdialog 띄우기 -> 선택하면 setAlarm 호출
+        val cal = Calendar.getInstance()
+        val timeSetListener = TimePickerDialog.OnTimeSetListener{
+                view: TimePicker?, hour: Int, minute: Int ->
+            cal.set(Calendar.HOUR_OF_DAY, hour)
+            cal.set(Calendar.MINUTE, minute)
+            //****
+            myhour = view!!.hour.toString()
+            mymin = view!!.minute.toString()
+            //오전 오후 설정
+            if (myhour.toInt() >= 12 && myhour.toInt() <= 24) {
+                myampm = "오후"
+            } else {
+                myampm = "오전"
+            }
 
-        val builder = NotificationCompat.Builder(this, id)
-            .setSmallIcon(R.drawable.ic_baseline_access_alarm_24)
-            .setContentTitle("일정 알람")
-            .setContentText(mymemo)
-            .setAutoCancel(true)
+            if (myhour.toInt() >= 0 && myhour.toInt() <= 9)
+                myhour = "0" + myhour
 
-        val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("time", mymemo)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-
-        val pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        builder.setContentIntent(pendingIntent)
-
-        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.createNotificationChannel(notificationChannel)
-        val notification = builder.build()
-        manager.notify(10, notification)
+            if (mymin.toInt() >= 0 && mymin.toInt() <= 9)
+                mymin = "0" + mymin
+            //알람 옆에 텍스트 설정
+            message = myampm + " " + myhour + " : " + mymin
+            binding.TextAlarm.setText(message)
+            //스위치 온
+            binding.AlarmSwitch.isChecked = true
+            //****
+            Alarm_Hour = view!!.hour
+            Alarm_Min = view!!.minute
+            setAlarm(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, hour, minute)
+        }
+        TimePickerDialog(this, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
     }
-    //**
 
+    fun setAlarm(year: Int, month:Int, day: Int, hour: Int, minute: Int){
+        lateinit var alarmIntent : PendingIntent
+        var cnt = MyApplication.prefs.getInt("cnt",0)
 
+        when (MyApplication.prefs.getString("priority", "default")){
+            "high"->{
+                alarmIntent = Intent(applicationContext, ReceiverHigh::class.java).let{
+                        intent->
+                    PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
+                }
+                Log.d("확인", "high, cnt: ${cnt}")
+            }
+            "default"->{
+                alarmIntent = Intent(applicationContext, ReceiverDefault::class.java).let{
+                        intent->
+                    PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
+                }
+                Log.d("확인", "default, cnt: ${cnt}")
+            }
+            "low"->{
+                alarmIntent = Intent(applicationContext, ReceiverLow::class.java).let{
+                        intent->
+                    PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
+                }
+                Log.d("확인", "low, cnt: ${cnt}")
+            }
+            "min"->{
+                alarmIntent = Intent(applicationContext, ReceiverMin::class.java).let{
+                        intent->
+                    PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
+                }
+                Log.d("확인", "min, cnt: ${cnt}")
+            }
+        }
+
+        val calendar: Calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+        }
+
+        alarmMgr?.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, alarmIntent)
+        Log.d("확인", "${hour}시 ${minute}에 알람 설정함")
+        val alarmData = MyAlarmData(cnt,"${hour}시 ${minute}분", year, month, day, hour, minute)
+        Log.d("확인","삽입: ${alarmData.id}/${alarmData.content}/${alarmData.year}/${alarmData.month}/${alarmData.day}/${alarmData.hour}/${alarmData.minute}")
+        alarmDBHelper.insertAlarm(alarmData)
+        val allAlarms = alarmDBHelper.getAllRecord()
+        for (i in allAlarms.indices){
+            Log.d("확인", "확인: ${allAlarms[i].id}/${allAlarms[i].content}/${allAlarms[i].year}/${allAlarms[i].month}/${allAlarms[i].day}/${allAlarms[i].hour}/${allAlarms[i].minute}")
+        }
+        MyApplication.prefs.setInt("cnt",cnt+1)
+        Toast.makeText(this, "알람이 설정되었습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    fun cancelAlarm(year:Int, month:Int, day:Int){//알람 취소
+        lateinit var intent: Intent
+        when (temp_priority){
+            "high"-> intent = Intent(applicationContext, ReceiverHigh::class.java)
+            "default"-> intent = Intent(applicationContext, ReceiverDefault::class.java)
+            "low" -> intent = Intent(applicationContext, ReceiverLow::class.java)
+            "min" -> intent = Intent(applicationContext, ReceiverMin::class.java)
+        }
+        val alarmId = alarmDBHelper.getID(year, month, day)
+        if (alarmId > -1){
+            val alarmIntent = PendingIntent.getBroadcast(applicationContext, alarmId, intent, PendingIntent.FLAG_NO_CREATE)
+            if (alarmIntent != null) {
+                alarmMgr?.cancel(alarmIntent)
+                alarmDBHelper.deleteAlarm(alarmId)
+            }
+        }
+        val allAlarms = alarmDBHelper.getAllRecord()
+        for (i in allAlarms.indices){
+            Log.d("확인", "확인: ${allAlarms[i].id}/${allAlarms[i].content}/${allAlarms[i].year}/${allAlarms[i].month}/${allAlarms[i].day}/${allAlarms[i].hour}/${allAlarms[i].minute}")
+        }
+        Toast.makeText(this, "알람이 취소되었습니다.", Toast.LENGTH_SHORT).show()
+    }
+    //****알람 관련 함수들
+
+    //*초기화할때, 이미지 아이콘 정보 바꾸는 함수.
+    fun setIcon(iconNum:Int){
+        if(iconNum==0) {
+            binding.ImageIcon.setImageResource(R.drawable.icon_0)
+        }
+        else if(iconNum==1) {
+            binding.ImageIcon.setImageResource(R.drawable.icon_1)
+        }
+        else if(iconNum==2) {
+            binding.ImageIcon.setImageResource(R.drawable.icon_2)
+        }
+        else if(iconNum==3) {
+            binding.ImageIcon.setImageResource(R.drawable.icon_3)
+        }
+        else if(iconNum==4) {
+            binding.ImageIcon.setImageResource(R.drawable.icon_4)
+        }
+        else if(iconNum==5) {
+            binding.ImageIcon.setImageResource(R.drawable.icon_5)
+        }
+    }
+    //*
+
+    //뒤로 가기 키나, 앱 강제 종료시 자동 저장하기 위해, onPause때 저장한다.
+    override fun onPause() {
+        saveDBDay()
+        super.onPause()
+        Log.i("MainActivityC", "Paused")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("MainActivityC", "Destroyed")
+    }
 }

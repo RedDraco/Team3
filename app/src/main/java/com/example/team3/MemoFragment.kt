@@ -17,7 +17,7 @@ import java.io.PrintWriter
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MemoFragment(var memoPath:String, val flag:Int) : Fragment() {
+class MemoFragment(var memoPath:String, val flag:Int, val date:String, val file_flag:Int) : Fragment() {
     var binding: FragmentMemoBinding?= null
 
     override fun onCreateView(
@@ -78,6 +78,7 @@ class MemoFragment(var memoPath:String, val flag:Int) : Fragment() {
 
                 val resultIntent = Intent()
                 resultIntent.putExtra("path", memoPath)
+                resultIntent.putExtra("fileflag", file_flag+1)
                 requireActivity().setResult(RESULT_OK, resultIntent)
                 requireActivity().finish()
             }
@@ -97,8 +98,7 @@ class MemoFragment(var memoPath:String, val flag:Int) : Fragment() {
     }
 
     fun createTxtFile(): File {
-        val timeStamp = SimpleDateFormat("yyyyMMdd").format(Date())
-        val imageFileName = timeStamp + "_"
+        val imageFileName = date + "_" + file_flag + "_txt_"
         val storageDir = requireActivity().getExternalFilesDir(null)
         //Prefix : imageFilename, Suffix : .jpg, Directory : storageDir
         val txtFile = File.createTempFile(imageFileName, ".txt", storageDir)

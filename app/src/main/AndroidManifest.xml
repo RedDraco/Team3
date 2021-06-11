@@ -22,6 +22,29 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Team3"
         android:networkSecurityConfig="@xml/network_security_config">
+        android:theme="@style/Theme.Team3">
+        <receiver
+            android:name=".ReceiverMin"
+            android:enabled="true"
+            android:exported="true"></receiver>
+        <receiver
+            android:name=".ReceiverLow"
+            android:enabled="true"
+            android:exported="true" />
+        <receiver
+            android:name=".ReceiverHigh"
+            android:enabled="true"
+            android:exported="true" />
+        <receiver
+            android:name=".ReceiverDefault"
+            android:enabled="true"
+            android:exported="true" />
+        <receiver
+            android:name=".MyReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".ThemeSetActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

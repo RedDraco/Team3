@@ -11,7 +11,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <TextView
@@ -30,6 +30,13 @@
             android:text="" />
 
         <ImageView
+            android:id="@+id/ImageFold"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/icon_fold" />
+
+        <ImageView
             android:id="@+id/ImageTrash"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -43,9 +50,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/edit_rec"
-        android:padding="5dp"
-        android:imeOptions="actionDone"
         android:focusableInTouchMode="true"
+        android:imeOptions="actionDone"
+        android:padding="5dp"
         android:text="" />
 
 </LinearLayout>
