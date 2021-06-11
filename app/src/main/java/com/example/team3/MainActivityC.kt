@@ -36,6 +36,8 @@ class MainActivityC() : AppCompatActivity() {
     var alarmDBHelper = AlarmDBHelper(this, "alarmDB.db")
     var temp_priority = MyApplication.prefs.getString("priority", "default")//이전 priority 값을 알아야 나중에 cancel할 때 intent 파악 가능
 
+    var modifyFlag:Boolean = false
+
     //*아이콘 관련 변수
     var iconId = 0
     var icon_flag = 0
@@ -262,6 +264,7 @@ class MainActivityC() : AppCompatActivity() {
                         //val file = File(PATH)
                         decideExtra(PATH, 1)
                         memo_flag++
+
                     }
                 }
             }
@@ -362,6 +365,19 @@ class MainActivityC() : AppCompatActivity() {
                     imagememo.visibility = View.VISIBLE
                 }
             }
+            containIView.findViewById<ImageView>(R.id.ImageMemo).setOnClickListener {
+                layout.removeView(containIView)
+                memo_flag--
+                if(memo_flag==0)
+                    file_flag = 1
+
+
+                val intent = Intent(this, AddMemo::class.java)
+                intent.putExtra("date", todayDate)
+                intent.putExtra("fileflag", file_flag)
+                intent.putExtra("path", targetPath.toString())
+                startActivityForResult(intent, ADD_REQUEST)
+            }
         }
         else if(dflag == 3) {
             val containDView = layoutInflater.inflate(R.layout.addmemo_drawing_ll, null)
@@ -371,7 +387,7 @@ class MainActivityC() : AppCompatActivity() {
             val decode = ImageDecoder.createSource(this.contentResolver, Uri.fromFile(file))
             val bitmap = ImageDecoder.decodeBitmap(decode)
 
-            val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + "Pictures/" + file.name)
+            val sourcePath = Paths.get(filepath)
             val targetPath = Paths.get(dayDir + "/" + file.name)
             if(initflag==1) {
                 Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
@@ -396,6 +412,18 @@ class MainActivityC() : AppCompatActivity() {
                 } else{
                     imagememo.visibility = View.VISIBLE
                 }
+            }
+            containDView.findViewById<ImageView>(R.id.DrawingMemo).setOnClickListener {
+                layout.removeView(containDView)
+                memo_flag--
+                if(memo_flag==0)
+                    file_flag = 1
+
+                val intent = Intent(this, AddMemo::class.java)
+                intent.putExtra("date", todayDate)
+                intent.putExtra("fileflag", file_flag)
+                intent.putExtra("path", targetPath.toString())
+                startActivityForResult(intent, ADD_REQUEST)
             }
         }
     }

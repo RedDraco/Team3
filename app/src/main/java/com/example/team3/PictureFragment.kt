@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import com.example.team3.databinding.FragmentPictureBinding
 import java.io.File
@@ -116,7 +117,7 @@ class PictureFragment(var memoPath:String, val flag:Int, val date:String, val fi
         if(flag == AddMemo.MODIFYPICTURE){
 
             val jpgFile = File(memoPath) //파일 경로 -> File 객체
-            val photoURI = FileProvider.getUriForFile(context!!, "com.example.team3.fileProvider", jpgFile) //파일 객체 -> uri 객체
+            val photoURI = jpgFile.toUri() //파일 객체 -> uri 객체
             val sourceBitmap = ImageDecoder.createSource(requireActivity().contentResolver, photoURI) //uri 객체 -> ImageDecoder.Source 객체
             val tempBitmap = ImageDecoder.decodeBitmap(sourceBitmap) //ImageDecoder.Source 객체 -> Bitmap 객체
             val newBitmap = tempBitmap.copy(Bitmap.Config.ARGB_8888, true) //Read-Only Bitmap 객체 -> 복사 -> Writable Bitmap 객체
