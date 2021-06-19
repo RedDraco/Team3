@@ -3,21 +3,15 @@ package com.example.team3
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.team3.databinding.*
 import java.io.File
 import java.io.FileOutputStream
@@ -68,6 +62,18 @@ class MainActivityC() : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val userTheme = MyApplication.prefs.getString("theme", "default")
+        when (userTheme){
+            "default"->setTheme(R.style.DefaultTheme)
+            "light"->setTheme(R.style.LightTheme)
+            "dark"->setTheme(R.style.DarkTheme)
+            "pink"->setTheme(R.style.PinkTheme)
+            "purple"->setTheme(R.style.PurpleTheme)
+            "brown"->setTheme(R.style.BrownTheme)
+            else->setTheme(R.style.DefaultTheme)
+        }
+
         binding = ActivityMaincBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -505,28 +511,24 @@ class MainActivityC() : AppCompatActivity() {
                         intent->
                     PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
                 }
-                Log.d("확인", "high, cnt: ${cnt}")
             }
             "default"->{
                 alarmIntent = Intent(applicationContext, ReceiverDefault::class.java).let{
                         intent->
                     PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
                 }
-                Log.d("확인", "default, cnt: ${cnt}")
             }
             "low"->{
                 alarmIntent = Intent(applicationContext, ReceiverLow::class.java).let{
                         intent->
                     PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
                 }
-                Log.d("확인", "low, cnt: ${cnt}")
             }
             "min"->{
                 alarmIntent = Intent(applicationContext, ReceiverMin::class.java).let{
                         intent->
                     PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
                 }
-                Log.d("확인", "min, cnt: ${cnt}")
             }
         }
 
@@ -537,14 +539,8 @@ class MainActivityC() : AppCompatActivity() {
         }
 
         alarmMgr?.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, alarmIntent)
-        Log.d("확인", "${hour}시 ${minute}에 알람 설정함")
         val alarmData = MyAlarmData(cnt,"${hour}시 ${minute}분", year, month, day, hour, minute)
-        Log.d("확인","삽입: ${alarmData.id}/${alarmData.content}/${alarmData.year}/${alarmData.month}/${alarmData.day}/${alarmData.hour}/${alarmData.minute}")
         alarmDBHelper.insertAlarm(alarmData)
-        val allAlarms = alarmDBHelper.getAllRecord()
-        for (i in allAlarms.indices){
-            Log.d("확인", "확인: ${allAlarms[i].id}/${allAlarms[i].content}/${allAlarms[i].year}/${allAlarms[i].month}/${allAlarms[i].day}/${allAlarms[i].hour}/${allAlarms[i].minute}")
-        }
         MyApplication.prefs.setInt("cnt",cnt+1)
         Toast.makeText(this, "알람이 설정되었습니다.", Toast.LENGTH_SHORT).show()
     }
@@ -566,9 +562,6 @@ class MainActivityC() : AppCompatActivity() {
             }
         }
         val allAlarms = alarmDBHelper.getAllRecord()
-        for (i in allAlarms.indices){
-            Log.d("확인", "확인: ${allAlarms[i].id}/${allAlarms[i].content}/${allAlarms[i].year}/${allAlarms[i].month}/${allAlarms[i].day}/${allAlarms[i].hour}/${allAlarms[i].minute}")
-        }
         Toast.makeText(this, "알람이 취소되었습니다.", Toast.LENGTH_SHORT).show()
     }
     //****알람 관련 함수들

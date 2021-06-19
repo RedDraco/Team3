@@ -30,6 +30,18 @@ class AddMemo : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val userTheme = MyApplication.prefs.getString("theme", "default")
+        when (userTheme){
+            "default"->setTheme(R.style.DefaultTheme)
+            "light"->setTheme(R.style.LightTheme)
+            "dark"->setTheme(R.style.DarkTheme)
+            "pink"->setTheme(R.style.PinkTheme)
+            "purple"->setTheme(R.style.PurpleTheme)
+            "brown"->setTheme(R.style.BrownTheme)
+            else->setTheme(R.style.DefaultTheme)
+        }
+
         binding = ActivityAddMemoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

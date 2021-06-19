@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/backgroundColor"
     android:orientation="vertical"
     tools:context=".ShowAllActivity">
 
@@ -15,7 +16,8 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:textAlignment="center"
-        android:textSize="34sp"
+        android:textColor="?attr/textColor"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView

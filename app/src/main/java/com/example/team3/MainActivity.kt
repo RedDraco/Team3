@@ -2,6 +2,7 @@ package com.example.team3
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -31,6 +32,19 @@ open class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val userTheme = MyApplication.prefs.getString("theme", "default")
+        Log.i("확인", userTheme)
+        when (userTheme){
+            "default"->setTheme(R.style.DefaultTheme)
+            "light"->setTheme(R.style.LightTheme)
+            "dark"->setTheme(R.style.DarkTheme)
+            "pink"->setTheme(R.style.PinkTheme)
+            "purple"->setTheme(R.style.PurpleTheme)
+            "brown"->setTheme(R.style.BrownTheme)
+            else->setTheme(R.style.DefaultTheme)
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding.navigationView.itemIconTintList = null
         setContentView(binding.root)

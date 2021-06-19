@@ -17,9 +17,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/kotra_bold_ttf"
             android:text="메모 "
-            android:textSize="24dp"
+            android:textColor="?attr/textColor"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
@@ -53,6 +53,7 @@
         android:focusableInTouchMode="true"
         android:imeOptions="actionDone"
         android:padding="5dp"
-        android:text="" />
+        android:text=""
+        android:textColor="?attr/textColor" />
 
 </LinearLayout>

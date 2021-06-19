@@ -3,20 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:padding="10dp">
-
+    android:layout_height="match_parent"
+    tools:context=".FirstActivity">
 
     <TextView
-        android:id="@+id/firstSentence"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="26dp"
-        android:layout_marginTop="26dp"
-        android:text="모아보기"
-        android:textColor="?attr/textColor"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:layout_marginTop="209dp"
+        android:text="Team 3"
+        android:textSize="50sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

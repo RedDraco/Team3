@@ -80,19 +80,15 @@ class NotfSetActivity : AppCompatActivity() {
             "low" -> intent = Intent(applicationContext, ReceiverLow::class.java)
             "min" -> intent = Intent(applicationContext, ReceiverMin::class.java)
         }
-        Log.d("확인", "changePriority() 진입")
         if (alarmDBHelper.getRowCount()>0){
             //cancel all alarms
             val allAlarms = alarmDBHelper.getAllRecord()
-            for (i in allAlarms.indices){
-                Log.d("확인", "확인: ${allAlarms[i].id}/${allAlarms[i].content}/${allAlarms[i].year}/${allAlarms[i].month}/${allAlarms[i].day}/${allAlarms[i].hour}/${allAlarms[i].minute}")
-            }
             for (i in allAlarms.indices){
                 val alarmIntent = PendingIntent.getBroadcast(applicationContext, allAlarms[i].id, intent, PendingIntent.FLAG_NO_CREATE)
                 if (alarmIntent != null){
                     alarmMgr?.cancel(alarmIntent)
                     alarmDBHelper.deleteAlarm(allAlarms[i].id)
-                }else Log.d("확인","null")
+                }
             }
             //set alarms again
             for (i in allAlarms.indices){
@@ -111,28 +107,24 @@ class NotfSetActivity : AppCompatActivity() {
                         intent->
                     PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
                 }
-                Log.d("확인", "high, cnt: ${cnt}")
             }
             "default"->{
                 alarmIntent = Intent(applicationContext, ReceiverDefault::class.java).let{
                         intent->
                     PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
                 }
-                Log.d("확인", "default, cnt: ${cnt}")
             }
             "low"->{
                 alarmIntent = Intent(applicationContext, ReceiverLow::class.java).let{
                         intent->
                     PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
                 }
-                Log.d("확인", "low, cnt: ${cnt}")
             }
             "min"->{
                 alarmIntent = Intent(applicationContext, ReceiverMin::class.java).let{
                         intent->
                     PendingIntent.getBroadcast(applicationContext, cnt, intent, 0)
                 }
-                Log.d("확인", "min, cnt: ${cnt}")
             }
         }
 
@@ -143,14 +135,9 @@ class NotfSetActivity : AppCompatActivity() {
         }
 
         alarmMgr?.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, alarmIntent)
-        Log.d("확인", "${hour}시 ${minute}에 알람 설정함")
         val alarmData = MyAlarmData(cnt,"${hour}시 ${minute}분", year, month, day, hour, minute)
-        Log.d("확인","삽입: ${alarmData.id}/${alarmData.content}/${alarmData.year}/${alarmData.month}/${alarmData.day}/${alarmData.hour}/${alarmData.minute}")
         alarmDBHelper.insertAlarm(alarmData)
         val allAlarms = alarmDBHelper.getAllRecord()
-        for (i in allAlarms.indices){
-            Log.d("확인", "확인: ${allAlarms[i].id}/${allAlarms[i].content}/${allAlarms[i].year}/${allAlarms[i].month}/${allAlarms[i].day}/${allAlarms[i].hour}/${allAlarms[i].minute}")
-        }
         MyApplication.prefs.setInt("cnt", cnt+1)
     }
 }

@@ -6,7 +6,7 @@
     <stroke android:width="2dip"
         android:color="#B1BCBE"/>
 
-    <solid android:color="#EDF7FF"/>
+    <solid android:color="?attr/toolbarColor"/>
     <corners
         android:topLeftRadius="12dp"
         android:topRightRadius="12dp"

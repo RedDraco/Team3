@@ -81,15 +81,6 @@
                 android:textColor="?attr/textColor"
                 android:textSize="18sp" />
 
-            <Switch
-                android:id="@+id/switch3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/edge_under"
-                android:padding="15dp"
-                android:text="~을 열 때"
-                android:textColor="?attr/textColor"
-                android:textSize="18sp" />
         </LinearLayout>
     </LinearLayout>
 

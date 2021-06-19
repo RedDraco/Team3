@@ -44,7 +44,6 @@ class LockSetActivity : AppCompatActivity() {
             }
             CHECK_PWD_REQUEST->{
                 if (resultCode == Activity.RESULT_OK){
-                    Log.d("확인", "비밀번호 확인 성공")
                     val intent = Intent(this, PwdActivity::class.java)
                     intent.putExtra("mode", 1)
                     startActivityForResult(intent, CHANGE_PWD_REQUEST)
@@ -79,12 +78,14 @@ class LockSetActivity : AppCompatActivity() {
                     setLayout.visibility = View.INVISIBLE
                     flag = true
                     MyApplication.prefs.setString("password","")//비밀번호 초기화
+                    MyApplication.prefs.setString("lock", "false")
+                    switch2.isChecked = false
                 }
             }
 
             changePwd.setOnClickListener {
                 val intent = Intent(this@LockSetActivity, PwdActivity::class.java)
-                intent.putExtra("mode", 2)//mode2: 비밀번호 변경
+                intent.putExtra("mode", 2)//mode2: 비밀번호 확인
                 startActivityForResult(intent, CHECK_PWD_REQUEST)
             }
 

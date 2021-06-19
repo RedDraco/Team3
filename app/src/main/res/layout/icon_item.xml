@@ -12,6 +12,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:padding="5dp"
+        android:scaleType="fitCenter"
         app:srcCompat="@drawable/ic_baseline_access_alarm_24" />
 
 </LinearLayout>

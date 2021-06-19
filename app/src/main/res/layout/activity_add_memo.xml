@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/backgroundColor"
     android:orientation="vertical"
     tools:context=".AddMemo">
 
@@ -11,7 +12,10 @@
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="?attr/toolbarColor"
+        app:tabIndicatorColor="?attr/toolbarTextColor"
+        app:tabTextColor="?attr/toolbarTextColor">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
@@ -33,8 +37,8 @@
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="9"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:layout_weight="9">
 
     </FrameLayout>
 </LinearLayout>

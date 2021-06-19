@@ -3,7 +3,7 @@
     <style name="DefaultTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="toolbarColor">@color/black</item>
         <item name="toolbarTextColor">@color/white</item>
-        <item name="android:statusBarColor">@color/purple_200</item>
+        <item name="android:statusBarColor">@color/black</item>
         <item name="backgroundColor">@color/white</item>
         <item name="textColor">@color/black</item>
         <item name="subtextColor">@color/grey_3</item>
@@ -12,7 +12,7 @@
     <style name="LightTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="toolbarColor">@color/grey_1</item>
         <item name="toolbarTextColor">@color/black</item>
-        <item name="android:statusBarColor">@color/purple_200</item>
+        <item name="android:statusBarColor">@color/grey_4</item>
         <item name="backgroundColor">@color/white</item>
         <item name="textColor">@color/black</item>
         <item name="subtextColor">@color/grey_3</item>
@@ -21,7 +21,7 @@
     <style name="DarkTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="toolbarColor">@color/black</item>
         <item name="toolbarTextColor">@color/white</item>
-        <item name="android:statusBarColor">@color/purple_200</item>
+        <item name="android:statusBarColor">@color/black</item>
         <item name="backgroundColor">@color/black</item>
         <item name="textColor">@color/white</item>
         <item name="subtextColor">@color/grey_3</item>
@@ -30,7 +30,7 @@
     <style name="PinkTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="toolbarColor">@color/pink_2</item>
         <item name="toolbarTextColor">@color/white</item>
-        <item name="android:statusBarColor">@color/purple_200</item>
+        <item name="android:statusBarColor">@color/pink_2</item>
         <item name="backgroundColor">@color/white</item>
         <item name="textColor">@color/pink_4</item>
         <item name="subtextColor">@color/pink_3</item>
@@ -39,7 +39,7 @@
     <style name="PurpleTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="toolbarColor">@color/purple_2</item>
         <item name="toolbarTextColor">@color/white</item>
-        <item name="android:statusBarColor">@color/purple_200</item>
+        <item name="android:statusBarColor">@color/purple_2</item>
         <item name="backgroundColor">@color/white</item>
         <item name="textColor">@color/purple_4</item>
         <item name="subtextColor">@color/purple_3</item>
@@ -48,7 +48,7 @@
     <style name="BrownTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="toolbarColor">@color/brown_2</item>
         <item name="toolbarTextColor">@color/white</item>
-        <item name="android:statusBarColor">@color/purple_200</item>
+        <item name="android:statusBarColor">@color/brown_2</item>
         <item name="backgroundColor">@color/white</item>
         <item name="textColor">@color/brown_4</item>
         <item name="subtextColor">@color/brown_3</item>

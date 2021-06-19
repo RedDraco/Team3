@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
@@ -47,9 +48,11 @@ class PwdActivity : AppCompatActivity() {
             when (mode){
                 1->{
                     textView2.text = "비밀번호 설정"
+                    fingerPrintView.visibility = View.INVISIBLE
                 }
                 2->{
                     textView2.text = "비밀번호 확인"
+                    fingerPrintView.visibility = View.VISIBLE
                     btnSet.text = "확인"
                 }
             }
@@ -98,8 +101,7 @@ class PwdActivity : AppCompatActivity() {
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE ->
                 Log.e("확인", "Biometric features are currently unavailable.")
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
-                // Prompts the user to create credentials that your app accepts.
-                Log.e("확인", "필요한 인텐트 작업 호출 - 생략")
+                Log.e("확인", "지문 설정 필요")
             }
         }
 
@@ -149,14 +151,11 @@ class PwdActivity : AppCompatActivity() {
             val pwd = pwd1.text.toString() + pwd2.text.toString() + pwd3.text.toString() + pwd4.text.toString()
             MyApplication.prefs.setString("password",pwd)
         }
-        Log.d("확인", "비밀번호는 "+ MyApplication.prefs.getString("password", ""))
     }
 
     private fun checkPwd():Boolean {
-        Log.d("확인", "비밀번호는 "+ MyApplication.prefs.getString("password", ""))
         binding.apply {
             val pwd = pwd1.text.toString() + pwd2.text.toString() + pwd3.text.toString() + pwd4.text.toString()
-            Log.d("확인", "입력: " + pwd)
             if (pwd == MyApplication.prefs.getString("password", ""))
                 return true
             else

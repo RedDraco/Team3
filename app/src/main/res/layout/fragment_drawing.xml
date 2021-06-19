@@ -18,9 +18,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:backgroundTint="?attr/toolbarColor"
             android:src="@android:drawable/ic_menu_edit"
-            android:tint="@color/black"
-            android:backgroundTint="@color/purple_200"/>
+            android:tint="?attr/toolbarTextColor" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -33,22 +33,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/purple_200"
-                android:src="@drawable/arrow_up"
-                android:tint="@color/black"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"/>
+                android:backgroundTint="?attr/toolbarColor"
+                android:scaleType="fitCenter"
+                android:src="@drawable/arrow_up"
+                android:tint="?attr/toolbarTextColor" />
 
             <ImageButton
                 android:id="@+id/sizeDownButton"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/purple_200"
-                android:src="@drawable/arrow_down"
-                android:tint="@color/black"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"/>
+                android:backgroundTint="?attr/toolbarColor"
+                android:scaleType="fitCenter"
+                android:src="@drawable/arrow_down"
+                android:tint="?attr/toolbarTextColor" />
         </LinearLayout>
 
         <ImageButton
@@ -56,29 +56,29 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/ic_eraser"
-            android:tint="@color/black"
-            android:backgroundTint="@color/purple_200"
             android:adjustViewBounds="true"
-            android:scaleType="fitCenter"/>
+            android:backgroundTint="?attr/toolbarColor"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_eraser"
+            android:tint="?attr/toolbarTextColor" />
 
         <ImageButton
             android:id="@+id/refreshBtn"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:backgroundTint="?attr/toolbarColor"
             android:src="@android:drawable/ic_popup_sync"
-            android:tint="@color/black"
-            android:backgroundTint="@color/purple_200"/>
+            android:tint="?attr/toolbarTextColor" />
 
         <ImageButton
             android:id="@+id/dSaveBtn"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:backgroundTint="?attr/toolbarColor"
             android:src="@android:drawable/ic_menu_save"
-            android:tint="@color/black"
-            android:backgroundTint="@color/purple_200"/>
+            android:tint="?attr/toolbarTextColor" />
 
     </LinearLayout>
 
