@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
+import android.view.View
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.team3.databinding.ActivityMainBinding
@@ -36,23 +38,23 @@ class ShowAllActivity : AppCompatActivity() {
 
     private fun initData() {
         for(i in dayList) {
-            var date = "/$year$month$i"
-            var path = getExternalFilesDir(null).toString() + date
+            var date = "$year$month$i"
+            var path = getExternalFilesDir(null).toString() + "/" + date
             var directory: File = File(path)
             if(!directory.exists()) continue
             Log.i("directory", directory.toString())
             var files = directory.listFiles()
             Arrays.sort(files)
-            for (i in files) {
+            for (j in files) {
                 Log.i("filename", i.toString())
-                if(i.toString().contains("_data_")) continue
-                if (i.toString().contains(".txt")) {
-                    val inputStream = i.inputStream()
+                if(j.toString().contains("_data_")) continue
+                if (j.toString().contains(".txt")) {
+                    val inputStream = j.inputStream()
                     val dataText = inputStream.bufferedReader().use { it.readText() }
                     val sentence = dataText.split('\n')
                     val firstSentence = sentence[0]
                     Log.i("sentence", firstSentence)
-                    memoData.add(MemoData(firstSentence))
+                    memoData.add(MemoData(firstSentence, date))
                 }
             }
             Log.i("memo", memoData.size.toString())
@@ -64,6 +66,7 @@ class ShowAllActivity : AppCompatActivity() {
     private fun initRecyclerView() {
         recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
         adapter = MemoAdapter(memoData)
         recyclerView.adapter = adapter
     }

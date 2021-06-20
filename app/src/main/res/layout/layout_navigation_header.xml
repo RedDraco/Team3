@@ -8,7 +8,7 @@
 
 
     <TextView
-        android:id="@+id/memo_item"
+        android:id="@+id/firstSentence"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="26dp"
