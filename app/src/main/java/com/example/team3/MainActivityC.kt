@@ -310,7 +310,7 @@ class MainActivityC() : AppCompatActivity() {
             val inputStream = file.inputStream()
             val text = inputStream.bufferedReader().use{ it.readText() }
 
-            val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + file.name)
+            val sourcePath = Paths.get(filepath)
             val targetPath = Paths.get(dayDir + "/" + file.name)
             if(initflag==1) {
                 Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
@@ -337,6 +337,16 @@ class MainActivityC() : AppCompatActivity() {
                     textmemo.visibility = View.VISIBLE
                 }
             }
+            containTView.findViewById<EditText>(R.id.EditDMemo).setOnClickListener {
+                tempContainView = containTView
+                ismodify = true
+
+                val intent = Intent(this, AddMemo::class.java)
+                intent.putExtra("date", todayDate)
+                intent.putExtra("fileflag", file_flag)
+                intent.putExtra("path", targetPath.toString())
+                startActivityForResult(intent, ADD_REQUEST)
+            }
         }
         else if(dflag == 2) {
             val containIView = layoutInflater.inflate(R.layout.addmemo_picture_ll, null)
@@ -346,7 +356,7 @@ class MainActivityC() : AppCompatActivity() {
             val decode = ImageDecoder.createSource(this.contentResolver, Uri.fromFile(file))
             val bitmap = ImageDecoder.decodeBitmap(decode)
 
-            val sourcePath = Paths.get(getExternalFilesDir(null).toString() + "/" + "Pictures/" + file.name)
+            val sourcePath = Paths.get(filepath)
             val targetPath = Paths.get(dayDir + "/" + file.name)
             if(initflag==1) {
                 Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
